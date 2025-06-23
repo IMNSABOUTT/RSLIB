@@ -1715,7 +1715,7 @@ function RSCore.Draggable(Frame:Frame)
 	-- Can't just be as easy as adding a dragdetector. This is for accessibility, atleast it's simple to do.
 	table.insert(TableRBXConnections, UserInputService.InputBegan:Connect(function(k)
 		if k.UserInputType==Enum.UserInputType.MouseButton1 then
-			local atPos = CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)[1]
+			local atPos = CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)[2]
 			print(atPos)
 			if atPos == Frame then
 				task.spawn(function()

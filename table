@@ -1713,21 +1713,25 @@ end
 
 function RSCore.Draggable(Frame:Frame)
 	-- Can't just be as easy as adding a dragdetector. This is for accessibility, atleast it's simple to do.
-	local atPos = CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)[1]
-	print(atPos)
-	if atPos == Frame then
-		task.spawn(function()
-			local origin = Vector2.new(Mouse.X, Mouse.Y)
-			repeat
-				local current = Vector2.new(Mouse.X, Mouse.Y)
-				local delta = origin-current
-				Frame.Position-= UDim2.fromOffset(delta.X, delta.Y)
-				origin = current
-				task.wait()
-			until not UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-		end)
-	end
-	
+	table.insert(TableRBXConnections, UserInputService.InputBegan:Connect(function(k)
+		if k.UserInputType==Enum.UserInputType.MouseButton1 then
+			local atPos = CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)[1]
+			print(atPos)
+			if atPos == Frame then
+				task.spawn(function()
+					local origin = Vector2.new(Mouse.X, Mouse.Y)
+					repeat
+						local current = Vector2.new(Mouse.X, Mouse.Y)
+						local delta = origin-current
+						Frame.Position-= UDim2.fromOffset(delta.X, delta.Y)
+						origin = current
+						task.wait()
+					until not UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
+				end)
+			end
+		end
+	end))
+
 end
 
 function RSLibrary.Title(Title:string)
@@ -1784,18 +1788,18 @@ function RSLibrary.SelectPlayer()
 
 	local t = UserInputService.InputBegan:Connect(function(k, g)
 		--if g==false then
-			if k.UserInputType==Enum.UserInputType.MouseButton1 then
-				clicked = true
-				target = Mouse.Target
-			end
+		if k.UserInputType==Enum.UserInputType.MouseButton1 then
+			clicked = true
+			target = Mouse.Target
+		end
 		--end
 	end)
-	
+
 	repeat
 		task.wait()
 	until clicked
 	t:Disconnect()
-	
+
 	local hum:Humanoid = target.Parent:FindFirstChildWhichIsA("Humanoid")
 	if not hum then
 		hum = target.Parent.Parent:FindFirstChildWhichIsA("Humanoid")
@@ -1803,7 +1807,7 @@ function RSLibrary.SelectPlayer()
 	if hum then
 		selection = hum.Parent
 	end
-	
+
 	return selection
 end
 
@@ -1832,7 +1836,7 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 	Converted.g_ScreenUI.Destroying:Connect(function()
 		Value.Value = dfval
 	end)
-	
+
 	local function fireevent()
 		local e = Instance.new("BindableEvent")
 		e.Parent = c
@@ -1915,6 +1919,9 @@ Converted.g_HamburgerWindow.MouseButton1Down:Connect(function()
 	Converted.g_DocumentationPopup.Visible = true
 end)
 Converted.g_CloseWindow.MouseButton1Down:Connect(function()
+	for _,v in TableRBXConnections do
+		v:Disconnect()
+	end
 	Converted.g_ScreenUI:Destroy()
 end)
 Converted.g_DocumentationPopup.Window.Topbar.close.MouseButton1Down:Connect(function()

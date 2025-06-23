@@ -2224,21 +2224,18 @@ end
 
 function RSCore.Draggable(Frame:Frame)
 	-- Can't just be as easy as adding a dragdetector. This is for accessibility, atleast it's simple to do.
-	
-	Frame.InputBegan:Connect(function(k)
-		if k.UserInputType==Enum.UserInputType.MouseButton1 then
-			task.spawn(function()
-				local origin = Vector2.new(Mouse.X, Mouse.Y)
-				repeat
-					local current = Vector2.new(Mouse.X, Mouse.Y)
-					local delta = origin-current
-					Frame.Position+= UDim2.fromOffset(delta.X, delta.Y)
-					origin = current
-					task.wait()
-				until not UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-			end)
-		end
-	end)
+	if CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y)[1] == Frame then
+		task.spawn(function()
+			local origin = Vector2.new(Mouse.X, Mouse.Y)
+			repeat
+				local current = Vector2.new(Mouse.X, Mouse.Y)
+				local delta = origin-current
+				Frame.Position-= UDim2.fromOffset(delta.X, delta.Y)
+				origin = current
+				task.wait()
+			until not UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
+		end)
+	end
 	
 end
 

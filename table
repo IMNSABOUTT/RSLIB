@@ -1717,7 +1717,7 @@ function RSCore.Draggable(Frame:Frame)
 		if k.UserInputType==Enum.UserInputType.MouseButton1 then
 			local atPos = nil
 			for _,v in CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y) do
-				if v.Visible and not atPos then
+				if v.Visible and v.BackgroundTransparency==0 and not atPos then
 					atPos = v
 				end
 			end

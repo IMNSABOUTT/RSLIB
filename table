@@ -2230,8 +2230,10 @@ function RSCore.Draggable(Frame:Frame)
 			task.spawn(function()
 				local origin = Vector2.new(Mouse.X, Mouse.Y)
 				repeat
-					local delta = origin-Vector2.new(Mouse.X, Mouse.Y)
+					local current = Vector2.new(Mouse.X, Mouse.Y)
+					local delta = origin-current
 					Frame.Position+= UDim2.fromOffset(delta.X, delta.Y)
+					origin = current
 					task.wait()
 				until not UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
 			end)
@@ -2384,6 +2386,12 @@ end
 
 
 --// Script
+
+for _,v in Converted.g_ScreenUI:GetDescendants() do
+	if v:IsA("UIDragDetector") then
+		v:Destroy()
+	end
+end
 
 RSCore.AddDocumentationFunction("CreateContainer", "Creates a new container which also creates a sidebar button for the container.", "Container:Frame")
 RSCore.AddDocumentationFunction("Title", "Sets the title of the main window", "nil")

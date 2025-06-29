@@ -2308,7 +2308,7 @@ end
 local baseScale = .3
 
 if not RunService:IsStudio() then
-	CoreGui = game:GetService("CoreGui")
+	CoreGui = game:GetService("CoreGui"):FindFirstChildWhichIsA("BasePlayerGui")
 else
 	baseScale = .5
 end

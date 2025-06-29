@@ -2294,7 +2294,7 @@ function RSCore.Draggable(Frame:Frame)
 	table.insert(TableDragQueue, Frame)
 	table.insert(TableRBXConnections, UserInputService.InputBegan:Connect(function(k)
 		if k.UserInputType==Enum.UserInputType.MouseButton1 then
-			local CanPass = true
+			local CanPass = false
 			local Latest = nil
 			local stop = false
 			for _,v in CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y) do
@@ -2308,6 +2308,7 @@ function RSCore.Draggable(Frame:Frame)
 					end
 
 					if v==Frame then
+						CanPass = true
 						Latest = v
 					end
 				end

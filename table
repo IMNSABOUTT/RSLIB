@@ -2297,9 +2297,13 @@ function RSCore.Draggable(Frame:Frame)
 			local CanPass = false
 			local Latest = nil
 			local stop = false
+			local fb = false
 			for _,v in CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y) do
 				if v:IsDescendantOf(Converted.g_ScreenUI) and v.Visible==true and not stop then
-
+					
+					if v:IsA("TextButton") then
+						stop = true
+					end
 					if v~=Frame and not v:IsDescendantOf(Frame) then
 						if not Latest and table.find(TableDragQueue, v) then
 							stop = true

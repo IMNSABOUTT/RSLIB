@@ -1,7 +1,11 @@
 --// Variables
 
 local RSLibrary = {}
+
 local RSCore = {}
+local ContextCore = {}
+
+local TableDragQueue = {}
 local TableRBXConnections = {}
 local TableFunctionTasks = {}
 local TableCoroutineTasks = {}
@@ -9,6 +13,8 @@ local TableTempValues = {}
 local TableKeybinds = {}
 
 local CountCreatedContainers = 0
+local CountCreatedRows = 0
+local CountCreatedCharacters = 0
 
 local Player = game:GetService("Players").LocalPlayer
 local Mouse = Player:GetMouse()
@@ -90,16 +96,24 @@ local function MakeUI()
 	Converted['UIListLayout64'] = {Respective = Instance.new('UIListLayout'), Parent = Converted['g_DocumentationHolder58'].Respective}
 	Converted['UIPadding65'] = {Respective = Instance.new('UIPadding'), Parent = Converted['g_DocumentationHolder58'].Respective}
 	Converted['g_ContextMenu66'] = {Respective = Instance.new('CanvasGroup'), Parent = Converted['g_ScreenUI1'].Respective}
-	Converted['Frame67'] = {Respective = Instance.new('Frame'), Parent = Converted['g_ContextMenu66'].Respective}
-	Converted['TextButton68'] = {Respective = Instance.new('TextButton'), Parent = Converted['Frame67'].Respective}
+	Converted['g_ExampleContextFrame67'] = {Respective = Instance.new('Frame'), Parent = Converted['g_ContextMenu66'].Respective}
+	Converted['TextButton68'] = {Respective = Instance.new('TextButton'), Parent = Converted['g_ExampleContextFrame67'].Respective}
 	Converted['UIPadding69'] = {Respective = Instance.new('UIPadding'), Parent = Converted['TextButton68'].Respective}
 	Converted['UIListLayout70'] = {Respective = Instance.new('UIListLayout'), Parent = Converted['g_ContextMenu66'].Respective}
-	Converted['g_KeybindPopup71'] = {Respective = Instance.new('CanvasGroup'), Parent = Converted['g_ScreenUI1'].Respective}
-	Converted['Window72'] = {Respective = Instance.new('Frame'), Parent = Converted['g_KeybindPopup71'].Respective}
-	Converted['Topbar73'] = {Respective = Instance.new('Frame'), Parent = Converted['Window72'].Respective}
-	Converted['label74'] = {Respective = Instance.new('TextLabel'), Parent = Converted['Topbar73'].Respective}
-	Converted['ImageLabel75'] = {Respective = Instance.new('ImageLabel'), Parent = Converted['Topbar73'].Respective}
-	Converted['close76'] = {Respective = Instance.new('TextButton'), Parent = Converted['Topbar73'].Respective}
+	Converted['divisor71'] = {Respective = Instance.new('Frame'), Parent = Converted['g_ContextMenu66'].Respective}
+	Converted['b72'] = {Respective = Instance.new('Frame'), Parent = Converted['divisor71'].Respective}
+	Converted['g_KeybindPopup73'] = {Respective = Instance.new('CanvasGroup'), Parent = Converted['g_ScreenUI1'].Respective}
+	Converted['Window74'] = {Respective = Instance.new('Frame'), Parent = Converted['g_KeybindPopup73'].Respective}
+	Converted['Topbar75'] = {Respective = Instance.new('Frame'), Parent = Converted['Window74'].Respective}
+	Converted['label76'] = {Respective = Instance.new('TextLabel'), Parent = Converted['Topbar75'].Respective}
+	Converted['ImageLabel77'] = {Respective = Instance.new('ImageLabel'), Parent = Converted['Topbar75'].Respective}
+	Converted['close78'] = {Respective = Instance.new('TextButton'), Parent = Converted['Topbar75'].Respective}
+	Converted['g_TextboxPopup79'] = {Respective = Instance.new('CanvasGroup'), Parent = Converted['g_ScreenUI1'].Respective}
+	Converted['Window80'] = {Respective = Instance.new('Frame'), Parent = Converted['g_TextboxPopup79'].Respective}
+	Converted['TextBox81'] = {Respective = Instance.new('TextBox'), Parent = Converted['Window80'].Respective}
+	Converted['UIPadding82'] = {Respective = Instance.new('UIPadding'), Parent = Converted['TextBox81'].Respective}
+	Converted['UIPadding83'] = {Respective = Instance.new('UIPadding'), Parent = Converted['g_TextboxPopup79'].Respective}
+	Converted['context84'] = {Respective = Instance.new('TextLabel'), Parent = Converted['g_TextboxPopup79'].Respective}
 
 
 	Converted['g_ScreenUI1'].Respective.Name = `g_ScreenUI`
@@ -133,7 +147,7 @@ local function MakeUI()
 	Converted['g_MainWindow2'].Respective.BackgroundTransparency = 0
 	Converted['g_MainWindow2'].Respective.BackgroundColor3 = Color3.new(0.219608, 0.219608, 0.219608)
 	Converted['g_MainWindow2'].Respective.AnchorPoint = Vector2.new(0.5, 0.5)
-	Converted['g_MainWindow2'].Respective.Position = UDim2.new(0.5, 0, 0.5, 0)
+	Converted['g_MainWindow2'].Respective.Position = UDim2.new(0.5, 0, 0.5, 1)
 	Converted['g_MainWindow2'].Respective.Size = UDim2.new(0.5, 0, 0.5, 0)
 	Converted['g_MainWindow2'].Respective.Parent = Converted['g_MainWindow2'].Parent
 	Converted['g_MainWindow'] = Converted['g_MainWindow2'].Respective
@@ -268,7 +282,7 @@ local function MakeUI()
 	Converted['ImageLabel7'].Respective.Active = false
 	Converted['ImageLabel7'].Respective.Rotation = 0
 	Converted['ImageLabel7'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['ImageLabel7'].Respective.Visible = true
+	Converted['ImageLabel7'].Respective.Visible = false
 	Converted['ImageLabel7'].Respective.LayoutOrder = 0
 	Converted['ImageLabel7'].Respective.ZIndex = 1
 	Converted['ImageLabel7'].Respective.BorderSizePixel = 0
@@ -346,7 +360,7 @@ local function MakeUI()
 	Converted['g_HamburgerWindow9'].Respective.Active = true
 	Converted['g_HamburgerWindow9'].Respective.Rotation = 0
 	Converted['g_HamburgerWindow9'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['g_HamburgerWindow9'].Respective.Visible = true
+	Converted['g_HamburgerWindow9'].Respective.Visible = false
 	Converted['g_HamburgerWindow9'].Respective.LayoutOrder = 0
 	Converted['g_HamburgerWindow9'].Respective.ZIndex = 1
 	Converted['g_HamburgerWindow9'].Respective.BorderSizePixel = 0
@@ -435,7 +449,7 @@ local function MakeUI()
 	Converted['g_ExampleSidebarRow12'].Respective.BorderSizePixel = 1
 	Converted['g_ExampleSidebarRow12'].Respective.BorderMode = Enum.BorderMode.Outline
 	Converted['g_ExampleSidebarRow12'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
-	Converted['g_ExampleSidebarRow12'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['g_ExampleSidebarRow12'].Respective.AutomaticSize = Enum.AutomaticSize.Y
 	Converted['g_ExampleSidebarRow12'].Respective.BackgroundTransparency = 0
 	Converted['g_ExampleSidebarRow12'].Respective.BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.180392)
 	Converted['g_ExampleSidebarRow12'].Respective.AnchorPoint = Vector2.new(0, 0)
@@ -474,7 +488,7 @@ local function MakeUI()
 	Converted['button13'].Respective.BorderSizePixel = 0
 	Converted['button13'].Respective.BorderMode = Enum.BorderMode.Outline
 	Converted['button13'].Respective.BorderColor3 = Color3.new(0, 0, 0)
-	Converted['button13'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['button13'].Respective.AutomaticSize = Enum.AutomaticSize.Y
 	Converted['button13'].Respective.BackgroundTransparency = 0
 	Converted['button13'].Respective.BackgroundColor3 = Color3.new(0.219608, 0.219608, 0.219608)
 	Converted['button13'].Respective.AnchorPoint = Vector2.new(0, 0)
@@ -869,7 +883,7 @@ local function MakeUI()
 	Converted['boolean32'].Respective.Active = false
 	Converted['boolean32'].Respective.Rotation = 0
 	Converted['boolean32'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['boolean32'].Respective.Visible = false
+	Converted['boolean32'].Respective.Visible = true
 	Converted['boolean32'].Respective.LayoutOrder = 0
 	Converted['boolean32'].Respective.ZIndex = 1
 	Converted['boolean32'].Respective.BorderSizePixel = 0
@@ -1066,7 +1080,7 @@ local function MakeUI()
 	Converted['label39'].Respective.TextXAlignment = Enum.TextXAlignment.Left
 	Converted['label39'].Respective.TextYAlignment = Enum.TextYAlignment.Center
 	Converted['label39'].Respective.TextScaled = false
-	Converted['label39'].Respective.TextSize = 20
+	Converted['label39'].Respective.TextSize = 21
 	Converted['label39'].Respective.TextStrokeColor3 = Color3.new(0, 0, 0)
 	Converted['label39'].Respective.LineHeight = 1
 	Converted['label39'].Respective.MaxVisibleGraphemes = -1
@@ -1089,7 +1103,7 @@ local function MakeUI()
 	Converted['label39'].Respective.BackgroundColor3 = Color3.new(0.219608, 0.219608, 0.219608)
 	Converted['label39'].Respective.AnchorPoint = Vector2.new(0, 0)
 	Converted['label39'].Respective.Position = UDim2.new(0, 0, 0, 0)
-	Converted['label39'].Respective.Size = UDim2.new(1, 0, 0, 19)
+	Converted['label39'].Respective.Size = UDim2.new(1, 0, 0, 21)
 	Converted['label39'].Respective.Parent = Converted['label39'].Parent
 	Converted['label'] = Converted['label39'].Respective
 	table.remove(Converted, table.find(Converted, 'label39'))
@@ -1101,7 +1115,7 @@ local function MakeUI()
 	Converted['string40'].Respective.Active = false
 	Converted['string40'].Respective.Rotation = 0
 	Converted['string40'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['string40'].Respective.Visible = true
+	Converted['string40'].Respective.Visible = false
 	Converted['string40'].Respective.LayoutOrder = 0
 	Converted['string40'].Respective.ZIndex = 1
 	Converted['string40'].Respective.BorderSizePixel = 0
@@ -1803,28 +1817,28 @@ local function MakeUI()
 	Converted['g_ContextMenu'] = Converted['g_ContextMenu66'].Respective
 	table.remove(Converted, table.find(Converted, 'g_ContextMenu66'))
 
-	Converted['Frame67'].Respective.Name = `Frame`
-	Converted['Frame67'].Respective.Interactable = true
-	Converted['Frame67'].Respective.AutoLocalize = true
-	Converted['Frame67'].Respective.ClipsDescendants = false
-	Converted['Frame67'].Respective.Active = false
-	Converted['Frame67'].Respective.Rotation = 0
-	Converted['Frame67'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['Frame67'].Respective.Visible = true
-	Converted['Frame67'].Respective.LayoutOrder = 0
-	Converted['Frame67'].Respective.ZIndex = 1
-	Converted['Frame67'].Respective.BorderSizePixel = 0
-	Converted['Frame67'].Respective.BorderMode = Enum.BorderMode.Outline
-	Converted['Frame67'].Respective.BorderColor3 = Color3.new(0, 0, 0)
-	Converted['Frame67'].Respective.AutomaticSize = Enum.AutomaticSize.None
-	Converted['Frame67'].Respective.BackgroundTransparency = 1
-	Converted['Frame67'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
-	Converted['Frame67'].Respective.AnchorPoint = Vector2.new(0, 0)
-	Converted['Frame67'].Respective.Position = UDim2.new(0, 0, 0, 0)
-	Converted['Frame67'].Respective.Size = UDim2.new(1, 0, 0, 20)
-	Converted['Frame67'].Respective.Parent = Converted['Frame67'].Parent
-	Converted['Frame'] = Converted['Frame67'].Respective
-	table.remove(Converted, table.find(Converted, 'Frame67'))
+	Converted['g_ExampleContextFrame67'].Respective.Name = `g_ExampleContextFrame`
+	Converted['g_ExampleContextFrame67'].Respective.Interactable = true
+	Converted['g_ExampleContextFrame67'].Respective.AutoLocalize = true
+	Converted['g_ExampleContextFrame67'].Respective.ClipsDescendants = false
+	Converted['g_ExampleContextFrame67'].Respective.Active = false
+	Converted['g_ExampleContextFrame67'].Respective.Rotation = 0
+	Converted['g_ExampleContextFrame67'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['g_ExampleContextFrame67'].Respective.Visible = true
+	Converted['g_ExampleContextFrame67'].Respective.LayoutOrder = 0
+	Converted['g_ExampleContextFrame67'].Respective.ZIndex = 1
+	Converted['g_ExampleContextFrame67'].Respective.BorderSizePixel = 0
+	Converted['g_ExampleContextFrame67'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['g_ExampleContextFrame67'].Respective.BorderColor3 = Color3.new(0, 0, 0)
+	Converted['g_ExampleContextFrame67'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['g_ExampleContextFrame67'].Respective.BackgroundTransparency = 1
+	Converted['g_ExampleContextFrame67'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
+	Converted['g_ExampleContextFrame67'].Respective.AnchorPoint = Vector2.new(0, 0)
+	Converted['g_ExampleContextFrame67'].Respective.Position = UDim2.new(0, 0, 0, 0)
+	Converted['g_ExampleContextFrame67'].Respective.Size = UDim2.new(1, 0, 0, 20)
+	Converted['g_ExampleContextFrame67'].Respective.Parent = Converted['g_ExampleContextFrame67'].Parent
+	Converted['g_ExampleContextFrame'] = Converted['g_ExampleContextFrame67'].Respective
+	table.remove(Converted, table.find(Converted, 'g_ExampleContextFrame67'))
 
 	Converted['TextButton68'].Respective.Name = `TextButton`
 	Converted['TextButton68'].Respective.Text = `Configure Keybinds`
@@ -1888,182 +1902,376 @@ local function MakeUI()
 	Converted['UIListLayout'] = Converted['UIListLayout70'].Respective
 	table.remove(Converted, table.find(Converted, 'UIListLayout70'))
 
-	Converted['g_KeybindPopup71'].Respective.Name = `g_KeybindPopup`
-	Converted['g_KeybindPopup71'].Respective.Interactable = true
-	Converted['g_KeybindPopup71'].Respective.AutoLocalize = true
-	Converted['g_KeybindPopup71'].Respective.ClipsDescendants = true
-	Converted['g_KeybindPopup71'].Respective.Active = false
-	Converted['g_KeybindPopup71'].Respective.Rotation = 0
-	Converted['g_KeybindPopup71'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['g_KeybindPopup71'].Respective.Visible = false
-	Converted['g_KeybindPopup71'].Respective.LayoutOrder = 0
-	Converted['g_KeybindPopup71'].Respective.ZIndex = 1
-	Converted['g_KeybindPopup71'].Respective.BorderSizePixel = 0
-	Converted['g_KeybindPopup71'].Respective.BorderMode = Enum.BorderMode.Outline
-	Converted['g_KeybindPopup71'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
-	Converted['g_KeybindPopup71'].Respective.AutomaticSize = Enum.AutomaticSize.None
-	Converted['g_KeybindPopup71'].Respective.BackgroundTransparency = 0
-	Converted['g_KeybindPopup71'].Respective.BackgroundColor3 = Color3.new(0.219608, 0.219608, 0.219608)
-	Converted['g_KeybindPopup71'].Respective.AnchorPoint = Vector2.new(0.5, 0.5)
-	Converted['g_KeybindPopup71'].Respective.Position = UDim2.new(0.5, 0, 0.5, 0)
-	Converted['g_KeybindPopup71'].Respective.Size = UDim2.new(0.400000006, 0, 0.400000006, 0)
-	Converted['g_KeybindPopup71'].Respective.Parent = Converted['g_KeybindPopup71'].Parent
-	Converted['g_KeybindPopup'] = Converted['g_KeybindPopup71'].Respective
-	table.remove(Converted, table.find(Converted, 'g_KeybindPopup71'))
+	Converted['divisor71'].Respective.Name = `divisor`
+	Converted['divisor71'].Respective.Interactable = true
+	Converted['divisor71'].Respective.AutoLocalize = true
+	Converted['divisor71'].Respective.ClipsDescendants = false
+	Converted['divisor71'].Respective.Active = false
+	Converted['divisor71'].Respective.Rotation = 0
+	Converted['divisor71'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['divisor71'].Respective.Visible = false
+	Converted['divisor71'].Respective.LayoutOrder = 0
+	Converted['divisor71'].Respective.ZIndex = 1
+	Converted['divisor71'].Respective.BorderSizePixel = 0
+	Converted['divisor71'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['divisor71'].Respective.BorderColor3 = Color3.new(0, 0, 0)
+	Converted['divisor71'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['divisor71'].Respective.BackgroundTransparency = 1
+	Converted['divisor71'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
+	Converted['divisor71'].Respective.AnchorPoint = Vector2.new(0, 0)
+	Converted['divisor71'].Respective.Position = UDim2.new(0, 0, 0, 0)
+	Converted['divisor71'].Respective.Size = UDim2.new(1, 0, 0, 10)
+	Converted['divisor71'].Respective.Parent = Converted['divisor71'].Parent
+	Converted['divisor'] = Converted['divisor71'].Respective
+	table.remove(Converted, table.find(Converted, 'divisor71'))
 
-	Converted['Window72'].Respective.Name = `Window`
-	Converted['Window72'].Respective.Interactable = true
-	Converted['Window72'].Respective.AutoLocalize = true
-	Converted['Window72'].Respective.ClipsDescendants = false
-	Converted['Window72'].Respective.Active = false
-	Converted['Window72'].Respective.Rotation = 0
-	Converted['Window72'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['Window72'].Respective.Visible = true
-	Converted['Window72'].Respective.LayoutOrder = 0
-	Converted['Window72'].Respective.ZIndex = 1
-	Converted['Window72'].Respective.BorderSizePixel = 1
-	Converted['Window72'].Respective.BorderMode = Enum.BorderMode.Outline
-	Converted['Window72'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
-	Converted['Window72'].Respective.AutomaticSize = Enum.AutomaticSize.None
-	Converted['Window72'].Respective.BackgroundTransparency = 0
-	Converted['Window72'].Respective.BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.180392)
-	Converted['Window72'].Respective.AnchorPoint = Vector2.new(0.5, 0.5)
-	Converted['Window72'].Respective.Position = UDim2.new(0.5, 0, 0.5, 0)
-	Converted['Window72'].Respective.Size = UDim2.new(1, -10, 1, -10)
-	Converted['Window72'].Respective.Parent = Converted['Window72'].Parent
-	Converted['Window'] = Converted['Window72'].Respective
-	table.remove(Converted, table.find(Converted, 'Window72'))
+	Converted['b72'].Respective.Name = `b`
+	Converted['b72'].Respective.Interactable = true
+	Converted['b72'].Respective.AutoLocalize = true
+	Converted['b72'].Respective.ClipsDescendants = false
+	Converted['b72'].Respective.Active = false
+	Converted['b72'].Respective.Rotation = 0
+	Converted['b72'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['b72'].Respective.Visible = true
+	Converted['b72'].Respective.LayoutOrder = 0
+	Converted['b72'].Respective.ZIndex = 1
+	Converted['b72'].Respective.BorderSizePixel = 0
+	Converted['b72'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['b72'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
+	Converted['b72'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['b72'].Respective.BackgroundTransparency = 0
+	Converted['b72'].Respective.BackgroundColor3 = Color3.new(0.133333, 0.133333, 0.133333)
+	Converted['b72'].Respective.AnchorPoint = Vector2.new(0.5, 0.5)
+	Converted['b72'].Respective.Position = UDim2.new(0.5, 0, 0.5, 0)
+	Converted['b72'].Respective.Size = UDim2.new(1, -20, 0, 1)
+	Converted['b72'].Respective.Parent = Converted['b72'].Parent
+	Converted['b'] = Converted['b72'].Respective
+	table.remove(Converted, table.find(Converted, 'b72'))
 
-	Converted['Topbar73'].Respective.Name = `Topbar`
-	Converted['Topbar73'].Respective.Interactable = true
-	Converted['Topbar73'].Respective.AutoLocalize = true
-	Converted['Topbar73'].Respective.ClipsDescendants = false
-	Converted['Topbar73'].Respective.Active = false
-	Converted['Topbar73'].Respective.Rotation = 0
-	Converted['Topbar73'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['Topbar73'].Respective.Visible = true
-	Converted['Topbar73'].Respective.LayoutOrder = 0
-	Converted['Topbar73'].Respective.ZIndex = 1
-	Converted['Topbar73'].Respective.BorderSizePixel = 1
-	Converted['Topbar73'].Respective.BorderMode = Enum.BorderMode.Outline
-	Converted['Topbar73'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
-	Converted['Topbar73'].Respective.AutomaticSize = Enum.AutomaticSize.None
-	Converted['Topbar73'].Respective.BackgroundTransparency = 0
-	Converted['Topbar73'].Respective.BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.180392)
-	Converted['Topbar73'].Respective.AnchorPoint = Vector2.new(0, 0)
-	Converted['Topbar73'].Respective.Position = UDim2.new(0, 0, 0, 0)
-	Converted['Topbar73'].Respective.Size = UDim2.new(1, 0, 0, 20)
-	Converted['Topbar73'].Respective.Parent = Converted['Topbar73'].Parent
-	Converted['Topbar'] = Converted['Topbar73'].Respective
-	table.remove(Converted, table.find(Converted, 'Topbar73'))
+	Converted['g_KeybindPopup73'].Respective.Name = `g_KeybindPopup`
+	Converted['g_KeybindPopup73'].Respective.Interactable = true
+	Converted['g_KeybindPopup73'].Respective.AutoLocalize = true
+	Converted['g_KeybindPopup73'].Respective.ClipsDescendants = true
+	Converted['g_KeybindPopup73'].Respective.Active = false
+	Converted['g_KeybindPopup73'].Respective.Rotation = 0
+	Converted['g_KeybindPopup73'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['g_KeybindPopup73'].Respective.Visible = false
+	Converted['g_KeybindPopup73'].Respective.LayoutOrder = 0
+	Converted['g_KeybindPopup73'].Respective.ZIndex = 1
+	Converted['g_KeybindPopup73'].Respective.BorderSizePixel = 0
+	Converted['g_KeybindPopup73'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['g_KeybindPopup73'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
+	Converted['g_KeybindPopup73'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['g_KeybindPopup73'].Respective.BackgroundTransparency = 0
+	Converted['g_KeybindPopup73'].Respective.BackgroundColor3 = Color3.new(0.219608, 0.219608, 0.219608)
+	Converted['g_KeybindPopup73'].Respective.AnchorPoint = Vector2.new(0.5, 0.5)
+	Converted['g_KeybindPopup73'].Respective.Position = UDim2.new(0.5, 0, 0.5, 0)
+	Converted['g_KeybindPopup73'].Respective.Size = UDim2.new(0.400000006, 0, 0.400000006, 0)
+	Converted['g_KeybindPopup73'].Respective.Parent = Converted['g_KeybindPopup73'].Parent
+	Converted['g_KeybindPopup'] = Converted['g_KeybindPopup73'].Respective
+	table.remove(Converted, table.find(Converted, 'g_KeybindPopup73'))
 
-	Converted['label74'].Respective.Name = `label`
-	Converted['label74'].Respective.Text = `Keybinds for CommandName`
-	Converted['label74'].Respective.RichText = false
-	Converted['label74'].Respective.TextColor3 = Color3.new(1, 1, 1)
-	Converted['label74'].Respective.TextStrokeTransparency = 1
-	Converted['label74'].Respective.TextTransparency = 0
-	Converted['label74'].Respective.TextTruncate = Enum.TextTruncate.None
-	Converted['label74'].Respective.TextWrapped = true
-	Converted['label74'].Respective.TextXAlignment = Enum.TextXAlignment.Left
-	Converted['label74'].Respective.TextYAlignment = Enum.TextYAlignment.Center
-	Converted['label74'].Respective.TextScaled = true
-	Converted['label74'].Respective.TextSize = 14
-	Converted['label74'].Respective.TextStrokeColor3 = Color3.new(0, 0, 0)
-	Converted['label74'].Respective.LineHeight = 1
-	Converted['label74'].Respective.MaxVisibleGraphemes = -1
-	Converted['label74'].Respective.Font = Enum.Font.SourceSans
-	Converted['label74'].Respective.TextDirection = Enum.TextDirection.Auto
-	Converted['label74'].Respective.Interactable = false
-	Converted['label74'].Respective.AutoLocalize = true
-	Converted['label74'].Respective.ClipsDescendants = false
-	Converted['label74'].Respective.Active = false
-	Converted['label74'].Respective.Rotation = 0
-	Converted['label74'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['label74'].Respective.Visible = true
-	Converted['label74'].Respective.LayoutOrder = 0
-	Converted['label74'].Respective.ZIndex = 1
-	Converted['label74'].Respective.BorderSizePixel = 0
-	Converted['label74'].Respective.BorderMode = Enum.BorderMode.Outline
-	Converted['label74'].Respective.BorderColor3 = Color3.new(0, 0, 0)
-	Converted['label74'].Respective.AutomaticSize = Enum.AutomaticSize.None
-	Converted['label74'].Respective.BackgroundTransparency = 1
-	Converted['label74'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
-	Converted['label74'].Respective.AnchorPoint = Vector2.new(1, 0)
-	Converted['label74'].Respective.Position = UDim2.new(1, 0, 0, 0)
-	Converted['label74'].Respective.Size = UDim2.new(1, -5, 1, 0)
-	Converted['label74'].Respective.Parent = Converted['label74'].Parent
-	Converted['label'] = Converted['label74'].Respective
-	table.remove(Converted, table.find(Converted, 'label74'))
+	Converted['Window74'].Respective.Name = `Window`
+	Converted['Window74'].Respective.Interactable = true
+	Converted['Window74'].Respective.AutoLocalize = true
+	Converted['Window74'].Respective.ClipsDescendants = false
+	Converted['Window74'].Respective.Active = false
+	Converted['Window74'].Respective.Rotation = 0
+	Converted['Window74'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['Window74'].Respective.Visible = true
+	Converted['Window74'].Respective.LayoutOrder = 0
+	Converted['Window74'].Respective.ZIndex = 1
+	Converted['Window74'].Respective.BorderSizePixel = 1
+	Converted['Window74'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['Window74'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
+	Converted['Window74'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['Window74'].Respective.BackgroundTransparency = 0
+	Converted['Window74'].Respective.BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.180392)
+	Converted['Window74'].Respective.AnchorPoint = Vector2.new(0.5, 0.5)
+	Converted['Window74'].Respective.Position = UDim2.new(0.5, 0, 0.5, 0)
+	Converted['Window74'].Respective.Size = UDim2.new(1, -10, 1, -10)
+	Converted['Window74'].Respective.Parent = Converted['Window74'].Parent
+	Converted['Window'] = Converted['Window74'].Respective
+	table.remove(Converted, table.find(Converted, 'Window74'))
 
-	Converted['ImageLabel75'].Respective.Name = `ImageLabel`
-	Converted['ImageLabel75'].Respective.Image = `rbxassetid://4661609682`
-	Converted['ImageLabel75'].Respective.ImageColor3 = Color3.new(1, 1, 1)
-	Converted['ImageLabel75'].Respective.ImageRectOffset = Vector2.new(0, 0)
-	Converted['ImageLabel75'].Respective.ImageRectSize = Vector2.new(0, 0)
-	Converted['ImageLabel75'].Respective.ImageTransparency = 0
-	Converted['ImageLabel75'].Respective.ResampleMode = Enum.ResamplerMode.Default
-	Converted['ImageLabel75'].Respective.ScaleType = Enum.ScaleType.Stretch
-	Converted['ImageLabel75'].Respective.Interactable = true
-	Converted['ImageLabel75'].Respective.AutoLocalize = true
-	Converted['ImageLabel75'].Respective.ClipsDescendants = false
-	Converted['ImageLabel75'].Respective.Active = false
-	Converted['ImageLabel75'].Respective.Rotation = 0
-	Converted['ImageLabel75'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['ImageLabel75'].Respective.Visible = true
-	Converted['ImageLabel75'].Respective.LayoutOrder = 0
-	Converted['ImageLabel75'].Respective.ZIndex = 1
-	Converted['ImageLabel75'].Respective.BorderSizePixel = 0
-	Converted['ImageLabel75'].Respective.BorderMode = Enum.BorderMode.Outline
-	Converted['ImageLabel75'].Respective.BorderColor3 = Color3.new(0, 0, 0)
-	Converted['ImageLabel75'].Respective.AutomaticSize = Enum.AutomaticSize.None
-	Converted['ImageLabel75'].Respective.BackgroundTransparency = 1
-	Converted['ImageLabel75'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
-	Converted['ImageLabel75'].Respective.AnchorPoint = Vector2.new(1, 0.5)
-	Converted['ImageLabel75'].Respective.Position = UDim2.new(1, -2, 0.5, 0)
-	Converted['ImageLabel75'].Respective.Size = UDim2.new(0, 17, 0, 17)
-	Converted['ImageLabel75'].Respective.Parent = Converted['ImageLabel75'].Parent
-	Converted['ImageLabel'] = Converted['ImageLabel75'].Respective
-	table.remove(Converted, table.find(Converted, 'ImageLabel75'))
+	Converted['Topbar75'].Respective.Name = `Topbar`
+	Converted['Topbar75'].Respective.Interactable = true
+	Converted['Topbar75'].Respective.AutoLocalize = true
+	Converted['Topbar75'].Respective.ClipsDescendants = false
+	Converted['Topbar75'].Respective.Active = false
+	Converted['Topbar75'].Respective.Rotation = 0
+	Converted['Topbar75'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['Topbar75'].Respective.Visible = true
+	Converted['Topbar75'].Respective.LayoutOrder = 0
+	Converted['Topbar75'].Respective.ZIndex = 1
+	Converted['Topbar75'].Respective.BorderSizePixel = 1
+	Converted['Topbar75'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['Topbar75'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
+	Converted['Topbar75'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['Topbar75'].Respective.BackgroundTransparency = 0
+	Converted['Topbar75'].Respective.BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.180392)
+	Converted['Topbar75'].Respective.AnchorPoint = Vector2.new(0, 0)
+	Converted['Topbar75'].Respective.Position = UDim2.new(0, 0, 0, 0)
+	Converted['Topbar75'].Respective.Size = UDim2.new(1, 0, 0, 20)
+	Converted['Topbar75'].Respective.Parent = Converted['Topbar75'].Parent
+	Converted['Topbar'] = Converted['Topbar75'].Respective
+	table.remove(Converted, table.find(Converted, 'Topbar75'))
 
-	Converted['close76'].Respective.Name = `close`
-	Converted['close76'].Respective.Text = ``
-	Converted['close76'].Respective.RichText = false
-	Converted['close76'].Respective.TextColor3 = Color3.new(0, 0, 0)
-	Converted['close76'].Respective.TextStrokeTransparency = 1
-	Converted['close76'].Respective.TextTransparency = 0
-	Converted['close76'].Respective.TextTruncate = Enum.TextTruncate.None
-	Converted['close76'].Respective.TextWrapped = false
-	Converted['close76'].Respective.TextXAlignment = Enum.TextXAlignment.Center
-	Converted['close76'].Respective.TextYAlignment = Enum.TextYAlignment.Center
-	Converted['close76'].Respective.TextScaled = false
-	Converted['close76'].Respective.TextSize = 14
-	Converted['close76'].Respective.TextStrokeColor3 = Color3.new(0, 0, 0)
-	Converted['close76'].Respective.LineHeight = 1
-	Converted['close76'].Respective.MaxVisibleGraphemes = -1
-	Converted['close76'].Respective.Font = Enum.Font.SourceSans
-	Converted['close76'].Respective.TextDirection = Enum.TextDirection.Auto
-	Converted['close76'].Respective.Interactable = true
-	Converted['close76'].Respective.AutoLocalize = true
-	Converted['close76'].Respective.ClipsDescendants = false
-	Converted['close76'].Respective.Active = true
-	Converted['close76'].Respective.Rotation = 0
-	Converted['close76'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
-	Converted['close76'].Respective.Visible = true
-	Converted['close76'].Respective.LayoutOrder = 0
-	Converted['close76'].Respective.ZIndex = 5
-	Converted['close76'].Respective.BorderSizePixel = 0
-	Converted['close76'].Respective.BorderMode = Enum.BorderMode.Outline
-	Converted['close76'].Respective.BorderColor3 = Color3.new(0, 0, 0)
-	Converted['close76'].Respective.AutomaticSize = Enum.AutomaticSize.None
-	Converted['close76'].Respective.BackgroundTransparency = 0.9990000128746033
-	Converted['close76'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
-	Converted['close76'].Respective.AnchorPoint = Vector2.new(1, 0)
-	Converted['close76'].Respective.Position = UDim2.new(1, 0, 0, 0)
-	Converted['close76'].Respective.Size = UDim2.new(0, 20, 0, 20)
-	Converted['close76'].Respective.Parent = Converted['close76'].Parent
-	Converted['close'] = Converted['close76'].Respective
-	table.remove(Converted, table.find(Converted, 'close76'))
+	Converted['label76'].Respective.Name = `label`
+	Converted['label76'].Respective.Text = `Keybinds for CommandName`
+	Converted['label76'].Respective.RichText = false
+	Converted['label76'].Respective.TextColor3 = Color3.new(1, 1, 1)
+	Converted['label76'].Respective.TextStrokeTransparency = 1
+	Converted['label76'].Respective.TextTransparency = 0
+	Converted['label76'].Respective.TextTruncate = Enum.TextTruncate.None
+	Converted['label76'].Respective.TextWrapped = true
+	Converted['label76'].Respective.TextXAlignment = Enum.TextXAlignment.Left
+	Converted['label76'].Respective.TextYAlignment = Enum.TextYAlignment.Center
+	Converted['label76'].Respective.TextScaled = true
+	Converted['label76'].Respective.TextSize = 14
+	Converted['label76'].Respective.TextStrokeColor3 = Color3.new(0, 0, 0)
+	Converted['label76'].Respective.LineHeight = 1
+	Converted['label76'].Respective.MaxVisibleGraphemes = -1
+	Converted['label76'].Respective.Font = Enum.Font.SourceSans
+	Converted['label76'].Respective.TextDirection = Enum.TextDirection.Auto
+	Converted['label76'].Respective.Interactable = false
+	Converted['label76'].Respective.AutoLocalize = true
+	Converted['label76'].Respective.ClipsDescendants = false
+	Converted['label76'].Respective.Active = false
+	Converted['label76'].Respective.Rotation = 0
+	Converted['label76'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['label76'].Respective.Visible = true
+	Converted['label76'].Respective.LayoutOrder = 0
+	Converted['label76'].Respective.ZIndex = 1
+	Converted['label76'].Respective.BorderSizePixel = 0
+	Converted['label76'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['label76'].Respective.BorderColor3 = Color3.new(0, 0, 0)
+	Converted['label76'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['label76'].Respective.BackgroundTransparency = 1
+	Converted['label76'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
+	Converted['label76'].Respective.AnchorPoint = Vector2.new(1, 0)
+	Converted['label76'].Respective.Position = UDim2.new(1, 0, 0, 0)
+	Converted['label76'].Respective.Size = UDim2.new(1, -5, 1, 0)
+	Converted['label76'].Respective.Parent = Converted['label76'].Parent
+	Converted['label'] = Converted['label76'].Respective
+	table.remove(Converted, table.find(Converted, 'label76'))
+
+	Converted['ImageLabel77'].Respective.Name = `ImageLabel`
+	Converted['ImageLabel77'].Respective.Image = `rbxassetid://4661609682`
+	Converted['ImageLabel77'].Respective.ImageColor3 = Color3.new(1, 1, 1)
+	Converted['ImageLabel77'].Respective.ImageRectOffset = Vector2.new(0, 0)
+	Converted['ImageLabel77'].Respective.ImageRectSize = Vector2.new(0, 0)
+	Converted['ImageLabel77'].Respective.ImageTransparency = 0
+	Converted['ImageLabel77'].Respective.ResampleMode = Enum.ResamplerMode.Default
+	Converted['ImageLabel77'].Respective.ScaleType = Enum.ScaleType.Stretch
+	Converted['ImageLabel77'].Respective.Interactable = true
+	Converted['ImageLabel77'].Respective.AutoLocalize = true
+	Converted['ImageLabel77'].Respective.ClipsDescendants = false
+	Converted['ImageLabel77'].Respective.Active = false
+	Converted['ImageLabel77'].Respective.Rotation = 0
+	Converted['ImageLabel77'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['ImageLabel77'].Respective.Visible = true
+	Converted['ImageLabel77'].Respective.LayoutOrder = 0
+	Converted['ImageLabel77'].Respective.ZIndex = 1
+	Converted['ImageLabel77'].Respective.BorderSizePixel = 0
+	Converted['ImageLabel77'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['ImageLabel77'].Respective.BorderColor3 = Color3.new(0, 0, 0)
+	Converted['ImageLabel77'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['ImageLabel77'].Respective.BackgroundTransparency = 1
+	Converted['ImageLabel77'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
+	Converted['ImageLabel77'].Respective.AnchorPoint = Vector2.new(1, 0.5)
+	Converted['ImageLabel77'].Respective.Position = UDim2.new(1, -2, 0.5, 0)
+	Converted['ImageLabel77'].Respective.Size = UDim2.new(0, 17, 0, 17)
+	Converted['ImageLabel77'].Respective.Parent = Converted['ImageLabel77'].Parent
+	Converted['ImageLabel'] = Converted['ImageLabel77'].Respective
+	table.remove(Converted, table.find(Converted, 'ImageLabel77'))
+
+	Converted['close78'].Respective.Name = `close`
+	Converted['close78'].Respective.Text = ``
+	Converted['close78'].Respective.RichText = false
+	Converted['close78'].Respective.TextColor3 = Color3.new(0, 0, 0)
+	Converted['close78'].Respective.TextStrokeTransparency = 1
+	Converted['close78'].Respective.TextTransparency = 0
+	Converted['close78'].Respective.TextTruncate = Enum.TextTruncate.None
+	Converted['close78'].Respective.TextWrapped = false
+	Converted['close78'].Respective.TextXAlignment = Enum.TextXAlignment.Center
+	Converted['close78'].Respective.TextYAlignment = Enum.TextYAlignment.Center
+	Converted['close78'].Respective.TextScaled = false
+	Converted['close78'].Respective.TextSize = 14
+	Converted['close78'].Respective.TextStrokeColor3 = Color3.new(0, 0, 0)
+	Converted['close78'].Respective.LineHeight = 1
+	Converted['close78'].Respective.MaxVisibleGraphemes = -1
+	Converted['close78'].Respective.Font = Enum.Font.SourceSans
+	Converted['close78'].Respective.TextDirection = Enum.TextDirection.Auto
+	Converted['close78'].Respective.Interactable = true
+	Converted['close78'].Respective.AutoLocalize = true
+	Converted['close78'].Respective.ClipsDescendants = false
+	Converted['close78'].Respective.Active = true
+	Converted['close78'].Respective.Rotation = 0
+	Converted['close78'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['close78'].Respective.Visible = true
+	Converted['close78'].Respective.LayoutOrder = 0
+	Converted['close78'].Respective.ZIndex = 5
+	Converted['close78'].Respective.BorderSizePixel = 0
+	Converted['close78'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['close78'].Respective.BorderColor3 = Color3.new(0, 0, 0)
+	Converted['close78'].Respective.AutomaticSize = Enum.AutomaticSize.None
+	Converted['close78'].Respective.BackgroundTransparency = 0.9990000128746033
+	Converted['close78'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
+	Converted['close78'].Respective.AnchorPoint = Vector2.new(1, 0)
+	Converted['close78'].Respective.Position = UDim2.new(1, 0, 0, 0)
+	Converted['close78'].Respective.Size = UDim2.new(0, 20, 0, 20)
+	Converted['close78'].Respective.Parent = Converted['close78'].Parent
+	Converted['close'] = Converted['close78'].Respective
+	table.remove(Converted, table.find(Converted, 'close78'))
+
+	Converted['g_TextboxPopup79'].Respective.Name = `g_TextboxPopup`
+	Converted['g_TextboxPopup79'].Respective.Interactable = true
+	Converted['g_TextboxPopup79'].Respective.AutoLocalize = true
+	Converted['g_TextboxPopup79'].Respective.ClipsDescendants = true
+	Converted['g_TextboxPopup79'].Respective.Active = false
+	Converted['g_TextboxPopup79'].Respective.Rotation = 0
+	Converted['g_TextboxPopup79'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['g_TextboxPopup79'].Respective.Visible = false
+	Converted['g_TextboxPopup79'].Respective.LayoutOrder = 0
+	Converted['g_TextboxPopup79'].Respective.ZIndex = 1
+	Converted['g_TextboxPopup79'].Respective.BorderSizePixel = 0
+	Converted['g_TextboxPopup79'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['g_TextboxPopup79'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
+	Converted['g_TextboxPopup79'].Respective.AutomaticSize = Enum.AutomaticSize.X
+	Converted['g_TextboxPopup79'].Respective.BackgroundTransparency = 0
+	Converted['g_TextboxPopup79'].Respective.BackgroundColor3 = Color3.new(0.219608, 0.219608, 0.219608)
+	Converted['g_TextboxPopup79'].Respective.AnchorPoint = Vector2.new(0.5, 0.5)
+	Converted['g_TextboxPopup79'].Respective.Position = UDim2.new(0.5, 0, 0.5, 0)
+	Converted['g_TextboxPopup79'].Respective.Size = UDim2.new(0, 0, 0, 50)
+	Converted['g_TextboxPopup79'].Respective.Parent = Converted['g_TextboxPopup79'].Parent
+	Converted['g_TextboxPopup'] = Converted['g_TextboxPopup79'].Respective
+	table.remove(Converted, table.find(Converted, 'g_TextboxPopup79'))
+
+	Converted['Window80'].Respective.Name = `Window`
+	Converted['Window80'].Respective.Interactable = true
+	Converted['Window80'].Respective.AutoLocalize = true
+	Converted['Window80'].Respective.ClipsDescendants = false
+	Converted['Window80'].Respective.Active = false
+	Converted['Window80'].Respective.Rotation = 0
+	Converted['Window80'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['Window80'].Respective.Visible = true
+	Converted['Window80'].Respective.LayoutOrder = 0
+	Converted['Window80'].Respective.ZIndex = 1
+	Converted['Window80'].Respective.BorderSizePixel = 1
+	Converted['Window80'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['Window80'].Respective.BorderColor3 = Color3.new(0.133333, 0.133333, 0.133333)
+	Converted['Window80'].Respective.AutomaticSize = Enum.AutomaticSize.X
+	Converted['Window80'].Respective.BackgroundTransparency = 0
+	Converted['Window80'].Respective.BackgroundColor3 = Color3.new(0.180392, 0.180392, 0.180392)
+	Converted['Window80'].Respective.AnchorPoint = Vector2.new(0, 0)
+	Converted['Window80'].Respective.Position = UDim2.new(0, 0, 0, 0)
+	Converted['Window80'].Respective.Size = UDim2.new(1, 0, 1, 0)
+	Converted['Window80'].Respective.Parent = Converted['Window80'].Parent
+	Converted['Window'] = Converted['Window80'].Respective
+	table.remove(Converted, table.find(Converted, 'Window80'))
+
+	Converted['TextBox81'].Respective.Name = `TextBox`
+	Converted['TextBox81'].Respective.Text = `hai~! :3 This is here to test~!`
+	Converted['TextBox81'].Respective.RichText = false
+	Converted['TextBox81'].Respective.TextColor3 = Color3.new(1, 1, 1)
+	Converted['TextBox81'].Respective.TextStrokeTransparency = 1
+	Converted['TextBox81'].Respective.TextTransparency = 0
+	Converted['TextBox81'].Respective.TextTruncate = Enum.TextTruncate.None
+	Converted['TextBox81'].Respective.TextWrapped = false
+	Converted['TextBox81'].Respective.TextXAlignment = Enum.TextXAlignment.Center
+	Converted['TextBox81'].Respective.TextYAlignment = Enum.TextYAlignment.Center
+	Converted['TextBox81'].Respective.TextScaled = false
+	Converted['TextBox81'].Respective.TextSize = 25
+	Converted['TextBox81'].Respective.TextStrokeColor3 = Color3.new(0, 0, 0)
+	Converted['TextBox81'].Respective.LineHeight = 1
+	Converted['TextBox81'].Respective.MaxVisibleGraphemes = -1
+	Converted['TextBox81'].Respective.Font = Enum.Font.SourceSans
+	Converted['TextBox81'].Respective.TextDirection = Enum.TextDirection.Auto
+	Converted['TextBox81'].Respective.PlaceholderText = ``
+	Converted['TextBox81'].Respective.ClearTextOnFocus = false
+	Converted['TextBox81'].Respective.TextEditable = true
+	Converted['TextBox81'].Respective.ShowNativeInput = true
+	Converted['TextBox81'].Respective.SelectionStart = -1
+	Converted['TextBox81'].Respective.CursorPosition = -1
+	Converted['TextBox81'].Respective.Interactable = true
+	Converted['TextBox81'].Respective.AutoLocalize = true
+	Converted['TextBox81'].Respective.ClipsDescendants = false
+	Converted['TextBox81'].Respective.Active = true
+	Converted['TextBox81'].Respective.Rotation = 0
+	Converted['TextBox81'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['TextBox81'].Respective.Visible = true
+	Converted['TextBox81'].Respective.LayoutOrder = 0
+	Converted['TextBox81'].Respective.ZIndex = 1
+	Converted['TextBox81'].Respective.BorderSizePixel = 0
+	Converted['TextBox81'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['TextBox81'].Respective.BorderColor3 = Color3.new(0, 0, 0)
+	Converted['TextBox81'].Respective.AutomaticSize = Enum.AutomaticSize.X
+	Converted['TextBox81'].Respective.BackgroundTransparency = 1
+	Converted['TextBox81'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
+	Converted['TextBox81'].Respective.AnchorPoint = Vector2.new(0, 0)
+	Converted['TextBox81'].Respective.Position = UDim2.new(0, 0, 0, 0)
+	Converted['TextBox81'].Respective.Size = UDim2.new(0, 0, 1, 0)
+	Converted['TextBox81'].Respective.Parent = Converted['TextBox81'].Parent
+	Converted['TextBox'] = Converted['TextBox81'].Respective
+	table.remove(Converted, table.find(Converted, 'TextBox81'))
+
+	Converted['UIPadding82'].Respective.Name = `UIPadding`
+	Converted['UIPadding82'].Respective.PaddingBottom = UDim.new(0, 0)
+	Converted['UIPadding82'].Respective.PaddingLeft = UDim.new(0, 5)
+	Converted['UIPadding82'].Respective.PaddingRight = UDim.new(0, 5)
+	Converted['UIPadding82'].Respective.PaddingTop = UDim.new(0, 10)
+	Converted['UIPadding82'].Respective.Parent = Converted['UIPadding82'].Parent
+	Converted['UIPadding'] = Converted['UIPadding82'].Respective
+	table.remove(Converted, table.find(Converted, 'UIPadding82'))
+
+	Converted['UIPadding83'].Respective.Name = `UIPadding`
+	Converted['UIPadding83'].Respective.PaddingBottom = UDim.new(0, 5)
+	Converted['UIPadding83'].Respective.PaddingLeft = UDim.new(0, 5)
+	Converted['UIPadding83'].Respective.PaddingRight = UDim.new(0, 5)
+	Converted['UIPadding83'].Respective.PaddingTop = UDim.new(0, 5)
+	Converted['UIPadding83'].Respective.Parent = Converted['UIPadding83'].Parent
+	Converted['UIPadding'] = Converted['UIPadding83'].Respective
+	table.remove(Converted, table.find(Converted, 'UIPadding83'))
+
+	Converted['context84'].Respective.Name = `context`
+	Converted['context84'].Respective.Text = `String Input`
+	Converted['context84'].Respective.RichText = false
+	Converted['context84'].Respective.TextColor3 = Color3.new(1, 1, 1)
+	Converted['context84'].Respective.TextStrokeTransparency = 1
+	Converted['context84'].Respective.TextTransparency = 0
+	Converted['context84'].Respective.TextTruncate = Enum.TextTruncate.None
+	Converted['context84'].Respective.TextWrapped = false
+	Converted['context84'].Respective.TextXAlignment = Enum.TextXAlignment.Center
+	Converted['context84'].Respective.TextYAlignment = Enum.TextYAlignment.Center
+	Converted['context84'].Respective.TextScaled = false
+	Converted['context84'].Respective.TextSize = 14
+	Converted['context84'].Respective.TextStrokeColor3 = Color3.new(0, 0, 0)
+	Converted['context84'].Respective.LineHeight = 1
+	Converted['context84'].Respective.MaxVisibleGraphemes = -1
+	Converted['context84'].Respective.Font = Enum.Font.SourceSansBold
+	Converted['context84'].Respective.TextDirection = Enum.TextDirection.Auto
+	Converted['context84'].Respective.Interactable = true
+	Converted['context84'].Respective.AutoLocalize = true
+	Converted['context84'].Respective.ClipsDescendants = false
+	Converted['context84'].Respective.Active = false
+	Converted['context84'].Respective.Rotation = 0
+	Converted['context84'].Respective.SizeConstraint = Enum.SizeConstraint.RelativeXY
+	Converted['context84'].Respective.Visible = true
+	Converted['context84'].Respective.LayoutOrder = 0
+	Converted['context84'].Respective.ZIndex = 1
+	Converted['context84'].Respective.BorderSizePixel = 0
+	Converted['context84'].Respective.BorderMode = Enum.BorderMode.Outline
+	Converted['context84'].Respective.BorderColor3 = Color3.new(0, 0, 0)
+	Converted['context84'].Respective.AutomaticSize = Enum.AutomaticSize.X
+	Converted['context84'].Respective.BackgroundTransparency = 1
+	Converted['context84'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
+	Converted['context84'].Respective.AnchorPoint = Vector2.new(0, 0)
+	Converted['context84'].Respective.Position = UDim2.new(0, 0, 0, 0)
+	Converted['context84'].Respective.Size = UDim2.new(1, 0, 0, 15)
+	Converted['context84'].Respective.Parent = Converted['context84'].Parent
+	Converted['context'] = Converted['context84'].Respective
+	table.remove(Converted, table.find(Converted, 'context84'))
 
 end
 
@@ -2081,23 +2289,31 @@ end
 function RSCore.Draggable(Frame:Frame)
 	-- Can't just be as easy as adding a dragdetector. This is for accessibility, atleast it's simple to do.
 	-- and then it still doesn't work.. my god dude
-	--[[table.insert(TableRBXConnections, UserInputService.InputBegan:Connect(function(k)
+	
+	-- okay I don't care abt it not working in the esc menu anymore but I added some more checks so ya can't drag 2 things at once
+	table.insert(TableDragQueue, Frame)
+	table.insert(TableRBXConnections, UserInputService.InputBegan:Connect(function(k)
 		if k.UserInputType==Enum.UserInputType.MouseButton1 then
-			local atPos = nil
-			local foundButton = false
+			local CanPass = true
+			local Latest = nil
+			local stop = false
 			for _,v in CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y) do
-				if v==Frame and not foundButton then
-					atPos = v
-				end
-				if v:IsA("TextButton") then
-					foundButton = true
+				if v:IsDescendantOf(Converted.g_ScreenUI) and v.Visible==true and not stop then
+
+					if v~=Frame and not v:IsDescendantOf(Frame) then
+						if not Latest and table.find(TableDragQueue, v) then
+							stop = true
+							CanPass = false
+						end
+					end
+
+					if v==Frame then
+						Latest = v
+					end
 				end
 			end
-			if foundButton then
-				atPos = nil
-			end
-			print(atPos)
-			if atPos == Frame then
+
+			if CanPass then
 				task.spawn(function()
 					local origin = Vector2.new(Mouse.X, Mouse.Y)
 					repeat
@@ -2110,9 +2326,9 @@ function RSCore.Draggable(Frame:Frame)
 				end)
 			end
 		end
-	end))]]
-	
-	Frame.InputBegan:Connect(function(k)
+	end))
+
+	--[[Frame.InputBegan:Connect(function(k)
 		if k.UserInputType==Enum.UserInputType.MouseButton1 then
 			task.spawn(function()
 				local origin = Vector2.new(Mouse.X, Mouse.Y)
@@ -2125,12 +2341,68 @@ function RSCore.Draggable(Frame:Frame)
 				until not UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
 			end)
 		end
-	end)
+	end)]]
 
+end
+
+function RSCore.PromptString(context:string?)
+	local tb = Converted.g_TextboxPopup:Clone()
+	local tx:TextBox = tb.Window.TextBox
+	tx.Text = ""
+	tx.TextSize = 20
+	tx.PlaceholderText = "String Input"
+	tb.Visible = true
+	if context then
+		tb.context.Text = context
+	end
+	tb.Parent = Converted.g_ScreenUI
+	tx:CaptureFocus()
+
+	local toReturn = nil
+	tx.FocusLost:Connect(function()
+		tb:Destroy()
+		toReturn = tx.Text
+	end)
+	repeat
+		task.wait()
+	until toReturn
+	return toReturn
+end
+
+function RSCore.DisplayText(context:string?)
+	local tb = Converted.g_TextboxPopup:Clone()
+	local tx:TextBox = tb.Window.TextBox
+	local ct:TextLabel = tb.context
+	tx.Text = ""
+	tx.TextEditable = false
+	tx.Interactable = false
+	tx.Text = context
+	tx.TextSize = 20
+	tx.PlaceholderText = "String Input"
+	tb.Visible = true
+	ct.Text = "Close"
+	ct.Visible = true
+	tb.Parent = Converted.g_ScreenUI
+	RSCore.Draggable(tb)
+
+	ct.InputBegan:Connect(function(k)
+		if k.UserInputType==Enum.UserInputType.MouseButton1 then
+			tb:Destroy()
+		end
+	end)
 end
 
 function RSLibrary.Title(Title:string)
 	Converted.g_TitleText.Text = Title
+	CountCreatedCharacters+=#Title
+end
+
+function RSLibrary.PromptString(context:string)
+	RSCore.PromptString(context)
+end
+
+function RSLibrary.DisplayText(context:string?)
+	RSCore.DisplayText(context)
 end
 
 function RSLibrary.CreateContainer(Name:string, Image:string, Context:string)
@@ -2144,8 +2416,9 @@ function RSLibrary.CreateContainer(Name:string, Image:string, Context:string)
 	local sb_button:TextButton = Sidebar.button
 	Sidebar.Visible = true
 	sb_button.Text = Name
+	Sidebar.Name = "sidebar"..Name.."esb11"
 	Sidebar.Parent = Converted.g_SidebarHolder
-
+	CountCreatedCharacters+=#Name
 
 	sb_button.MouseButton1Down:Connect(function()
 		for _,v in Converted.CommandPanel:GetChildren() do
@@ -2168,11 +2441,11 @@ end
 function RSLibrary.CreateSubContainer(Containero:Frame, Name:string, Context:string)
 	CountCreatedContainers += 1
 	local Container:Frame = Converted.g_ExampleSubCommandCategory:Clone()
-	Container.Name = Name.."subcat"
+	Container.Name = "s444"..Name.."subcat"
 	Container.Visible = true
 	Container.label.Text = Name
 	Container.Parent = Containero.holder
-	
+	CountCreatedCharacters+=#Name
 	local drop:TextButton = Container:FindFirstChild("dropd")
 	if drop then
 		local isDropped = true
@@ -2188,7 +2461,7 @@ function RSLibrary.CreateSubContainer(Containero:Frame, Name:string, Context:str
 			end
 		end)
 	end
-	
+
 	return Container
 end
 
@@ -2224,8 +2497,6 @@ end
 
 function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:BoolValue, Context:string)
 	local AbsoluteType = Type
-	local dfval = Value.Value
-	Value.Name = Name
 	local c:Frame = Converted.g_ExampleCommandRow:Clone()
 	local swtch:Frame = c.stylelist.boolean.switch
 	local b:TextButton = c.button
@@ -2239,15 +2510,19 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 			end
 		end
 	end
+	local originLab = Name
 	c.Name = "row."..Name.."m444"
+	CountCreatedCharacters+=#Name
 	c.Visible = true
 	c.Parent = Container:FindFirstChild("holder")
-	Value.Parent = c
 	local goalRSlayout = 0
-	Converted.g_ScreenUI.Destroying:Connect(function()
-		Value.Value = dfval
-	end)
-	
+	local dfval = nil
+	if Value then
+		dfval = Value.Value
+		Value.Name = Name
+		Value.Parent = c
+	end
+	CountCreatedRows+=1
 	local function fireevent()
 		local e = Instance.new("BindableEvent")
 		e.Parent = c
@@ -2282,6 +2557,9 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 		Value:GetPropertyChangedSignal("Value"):Connect(function()
 			see()
 		end)
+		Converted.g_ScreenUI.Destroying:Connect(function()
+			Value.Value = dfval
+		end)
 	end
 	if AbsoluteType=="string" then
 		goalRSlayout = 1
@@ -2295,17 +2573,29 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 			box:CaptureFocus()
 		end
 		Value:GetPropertyChangedSignal("Value"):Connect(function()
-			print("vc")
 			box.Text = Value.Value
 		end)
 	end
 	if RSLibrary.UseRSLayouts then
 		c.LayoutOrder = goalRSlayout
 	end
-	
+
 	c.ChildAdded:Connect(function(ce)
 		if ce:IsA("Frame") then
 			fireLocalEvent()
+		end
+		if ce:IsA("UIAspectRatioConstraint") then
+			for _,v in c:FindFirstChild("stylelist"):GetChildren() do
+				if v:IsA("Frame") then
+					if v.Name==Type then
+						v.label.Text = originLab
+					end
+				end
+			end
+			task.spawn(function()
+				task.wait(0.01)
+				ce:Destroy()
+			end)
 		end
 		if ce.Name=="kbn" and ce:IsA("StringValue") then
 			local k = ce.Value:upper()
@@ -2318,6 +2608,45 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 	end)
 
 	return c
+end
+
+function ContextCore.CountContext()
+	local count = 0
+	for _,v in Converted.g_ContextMenu:GetChildren() do
+		if v:IsA("Frame") and v.Visible then
+			count+=1
+		end
+	end
+	return count
+end
+
+function ContextCore.InitalizeNew()
+	for _,v in Converted.g_ContextMenu:GetChildren() do
+		if v:HasTag("e") then
+			v:Destroy()
+		end
+	end
+end
+
+function ContextCore.AddContext(context:string, action)
+	Converted.g_ExampleContextFrame.Visible = false
+	local c = Converted.g_ExampleContextFrame:Clone()
+	c:FindFirstChildWhichIsA("TextButton").Text = context
+	c:FindFirstChildWhichIsA("TextButton").MouseButton1Down:Connect(function()
+		action()
+	end)
+	c:AddTag("e")
+	c.Visible = true
+	c.Parent = Converted.g_ContextMenu
+end
+
+function ContextCore.AddDivisor()
+	if ContextCore.CountContext()>0 then
+		local c:Frame = Converted.g_ContextMenu.divisor:Clone()
+		c:AddTag("e")
+		c.Visible = true
+		c.Parent = Converted.g_ContextMenu
+	end
 end
 
 
@@ -2354,8 +2683,11 @@ Converted.g_ExampleSidebarRow.Visible = false
 Converted.g_ExampleCommandHolder.Visible = false
 Converted.g_ExampleSubCommandCategory.Visible = false
 Converted.g_ExampleDocumentationRow.Visible = false
-
+Converted.g_ContextMenu.Visible = false
 Converted.g_DocumentationPopup.Visible = false
+Converted.g_ExampleContextFrame.Visible = false
+Converted.g_ContextMenu.divisor.Visible = false
+
 Converted.g_ScreenUI.Parent = CoreGui
 
 local scale = baseScale
@@ -2363,65 +2695,105 @@ Converted.g_MainWindow.Size = UDim2.fromScale(scale, scale)
 local scale = baseScale-.5
 Converted.g_DocumentationPopup.Size = UDim2.fromScale(scale, scale)
 
+Converted.g_TextboxPopup.BorderSizePixel = 1
+
 --
 RSLibrary.UseRSLayouts = true
 --
 
 local contextThreads = {}
 table.insert(TableRBXConnections, UserInputService.InputBegan:Connect(function(k,g)
-	for index,v in TableKeybinds do
-		if k.KeyCode.Name ==v[2] or k.UserInputType.Name==v[2] then
-			local frame = Instance.new("Frame")
-			frame.Parent = v[1]
+	if not g then
+		for index,v in TableKeybinds do
+			if k.KeyCode.Name ==v[2] or k.UserInputType.Name==v[2] then
+				local frame = Instance.new("Frame")
+				frame.Parent = v[1]
+			end
 		end
 	end
 	if k.UserInputType==Enum.UserInputType.MouseButton2 then
-		local SelectedFrame:Frame = nil
+		Converted.g_ContextMenu.Visible = false
+		ContextCore.InitalizeNew()
+		Converted.g_ContextMenu.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
+		Converted.g_ContextMenu.Visible = true
+		local found = false
+
 		for _,v in CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y) do
+			if v.Name:lower():find("topbar") then
+				ContextCore.AddDivisor()
+				ContextCore.AddContext("Rename UI", function()
+					RSLibrary.Title(RSCore.PromptString("Ranem UI to.."))
+				end)
+			end
 			if v.Name:find("m444") then
-				SelectedFrame = v
+				found = true
+				local SelectedFrame = v
+
+				ContextCore.AddDivisor()
+				ContextCore.AddContext("Configure Keybinds", function()
+					local stop = false
+					task.wait(.01)
+					local t = game:GetService("UserInputService").InputBegan:Connect(function(k)
+						local goal = k.KeyCode
+						if not goal or goal.Name=="Unknown" then
+							goal = k.UserInputType
+						end
+
+						if goal then
+							task.wait(.01)
+							if not TableKeybinds[SelectedFrame] then
+								TableKeybinds[SelectedFrame] = {SelectedFrame, "x"}
+							end
+							goal = goal.Name
+							local inspect = Instance.new("UIAspectRatioConstraint")
+							inspect.Parent = SelectedFrame
+							task.wait(0.01)
+							local kbn = Instance.new("StringValue")
+							kbn.Name = "kbn"
+							kbn.Value = goal
+							kbn.Parent = SelectedFrame
+							TableKeybinds[SelectedFrame.Name] = {SelectedFrame, goal}
+							stop = true
+						end
+					end)
+					table.insert(TableRBXConnections, t)
+					task.spawn(function()
+						repeat
+							task.wait()
+						until stop
+						t:Disconnect()
+					end)
+				end)
+				ContextCore.AddContext("Clear Keybinds",function()
+					TableKeybinds[SelectedFrame.Name] = {SelectedFrame, nil}
+					task.wait(0.01)
+					local inspect = Instance.new("UIAspectRatioConstraint")
+					inspect.Parent = SelectedFrame
+
+				end)
+
+			end
+			if v.Name:find("esb11") then
+				found = true
+				ContextCore.AddDivisor()
+				ContextCore.AddContext("Rename This Category", function()
+					v.button.Text = RSCore.PromptString()
+				end)
+				ContextCore.AddContext("Add a Category", function()
+					local name = RSCore.PromptString("Category Name")
+					RSLibrary.CreateContainer(name)
+				end)
+				ContextCore.AddContext("Delete This Category", function()
+					v:Destroy()
+				end)
+				ContextCore.AddDivisor()
+				ContextCore.AddContext("Display UI Information", function()
+					RSCore.DisplayText("UI has "..CountCreatedRows.." row(s), "..CountCreatedContainers.." container(s) with "..CountCreatedCharacters.." usually visible text characters.")
+				end)
 			end
 		end
-		for _,v in contextThreads do
-			v:Disconnect()
-		end
-		if SelectedFrame then
-			Converted.g_ContextMenu.Visible = true
-			Converted.g_ContextMenu.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
-			
-			table.insert(contextThreads,Converted.g_ContextMenu.Frame.TextButton.MouseButton1Down:Connect(function()
-				local stop = false
-				task.wait(.01)
-				local t = game:GetService("UserInputService").InputBegan:Connect(function(k)
-					local goal = k.KeyCode
-					if not goal then
-						goal = k.UserInputType
-					end
-					
-					if goal then
-						task.wait(.01)
-						if not TableKeybinds[SelectedFrame] then
-							TableKeybinds[SelectedFrame] = {SelectedFrame, "x"}
-						end
-						goal = goal.Name
-						
-						local kbn = Instance.new("StringValue")
-						kbn.Name = "kbn"
-						kbn.Value = goal
-						kbn.Parent = SelectedFrame
-						TableKeybinds[SelectedFrame.Name] = {SelectedFrame, goal}
-						stop = true
-					end
-				end)
-				table.insert(TableRBXConnections, t)
-				task.spawn(function()
-					repeat
-						task.wait()
-					until stop
-					t:Disconnect()
-				end)
-			end))
-		else
+
+		if not found then
 			Converted.g_ContextMenu.Visible = false
 		end
 	else

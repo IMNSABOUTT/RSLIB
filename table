@@ -6,6 +6,7 @@ local TableRBXConnections = {}
 local TableFunctionTasks = {}
 local TableCoroutineTasks = {}
 local TableTempValues = {}
+local TableKeybinds = {}
 
 local CountCreatedContainers = 0
 
@@ -2238,7 +2239,7 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 			end
 		end
 	end
-	c.Name = "row."..Name
+	c.Name = "row."..Name.."m444"
 	c.Visible = true
 	c.Parent = Container:FindFirstChild("holder")
 	Value.Parent = c
@@ -2251,9 +2252,13 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 		local e = Instance.new("BindableEvent")
 		e.Parent = c
 	end
+	local fireLocalEvent
 
 	if AbsoluteType=="button" then
 		goalRSlayout = 0
+		fireLocalEvent = function()
+			fireevent()
+		end
 		b.MouseButton1Down:Connect(function()
 			fireevent()
 		end)
@@ -2266,7 +2271,9 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 
 			swtch:FindFirstChild(tostring(Value.Value)).Visible = true
 		end
-
+		fireLocalEvent = function()
+			Value.Value = not Value.Value
+		end
 		see()
 		b.MouseButton1Down:Connect(function()
 			fireevent()
@@ -2284,6 +2291,9 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 		box:GetPropertyChangedSignal("Text"):Connect(function()
 			Value.Value = box.Text
 		end)
+		fireLocalEvent = function()
+			box:CaptureFocus()
+		end
 		Value:GetPropertyChangedSignal("Value"):Connect(function()
 			print("vc")
 			box.Text = Value.Value
@@ -2293,9 +2303,17 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 		c.LayoutOrder = goalRSlayout
 	end
 	
-	c.ChildAdded:Connect(function(c)
-		if c:IsA("Frame") then
-			fireevent()
+	c.ChildAdded:Connect(function(ce)
+		if ce:IsA("Frame") then
+			fireLocalEvent()
+		end
+		if ce.Name=="kbn" and ce:IsA("StringValue") then
+			local k = ce.Value:upper()
+			local mod = " ["..k.."]"
+			c.stylelist.string.label.Text ..= mod
+			c.stylelist.boolean.label.Text ..= mod
+			c.stylelist.button.label.Text ..= mod
+
 		end
 	end)
 
@@ -2308,7 +2326,7 @@ end
 local baseScale = .3
 
 if not RunService:IsStudio() then
-	CoreGui = game:GetService("CoreGui"):FindFirstChildWhichIsA("BasePlayerGui")
+	CoreGui = game:GetService("CoreGui")
 else
 	baseScale = .5
 end
@@ -2349,9 +2367,66 @@ Converted.g_DocumentationPopup.Size = UDim2.fromScale(scale, scale)
 RSLibrary.UseRSLayouts = true
 --
 
+local contextThreads = {}
 table.insert(TableRBXConnections, UserInputService.InputBegan:Connect(function(k,g)
+	for index,v in TableKeybinds do
+		if k.KeyCode.Name ==v[2] or k.UserInputType.Name==v[2] then
+			local frame = Instance.new("Frame")
+			frame.Parent = v[1]
+		end
+	end
 	if k.UserInputType==Enum.UserInputType.MouseButton2 then
-		
+		local SelectedFrame:Frame = nil
+		for _,v in CoreGui:GetGuiObjectsAtPosition(Mouse.X, Mouse.Y) do
+			if v.Name:find("m444") then
+				SelectedFrame = v
+			end
+		end
+		for _,v in contextThreads do
+			v:Disconnect()
+		end
+		if SelectedFrame then
+			Converted.g_ContextMenu.Visible = true
+			Converted.g_ContextMenu.Position = UDim2.fromOffset(Mouse.X, Mouse.Y)
+			
+			table.insert(contextThreads,Converted.g_ContextMenu.Frame.TextButton.MouseButton1Down:Connect(function()
+				local stop = false
+				task.wait(.01)
+				local t = game:GetService("UserInputService").InputBegan:Connect(function(k)
+					local goal = k.KeyCode
+					if not goal then
+						goal = k.UserInputType
+					end
+					
+					if goal then
+						task.wait(.01)
+						if not TableKeybinds[SelectedFrame] then
+							TableKeybinds[SelectedFrame] = {SelectedFrame, "x"}
+						end
+						goal = goal.Name
+						
+						local kbn = Instance.new("StringValue")
+						kbn.Name = "kbn"
+						kbn.Value = goal
+						kbn.Parent = SelectedFrame
+						TableKeybinds[SelectedFrame.Name] = {SelectedFrame, goal}
+						stop = true
+					end
+				end)
+				table.insert(TableRBXConnections, t)
+				task.spawn(function()
+					repeat
+						task.wait()
+					until stop
+					t:Disconnect()
+				end)
+			end))
+		else
+			Converted.g_ContextMenu.Visible = false
+		end
+	else
+		task.wait(.05)
+		Converted.g_ContextMenu.Visible = false
 	end
 end))
 Converted.g_HamburgerWindow.MouseButton1Down:Connect(function()

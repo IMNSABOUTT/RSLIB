@@ -2570,7 +2570,7 @@ local function MakeUI()
 	Converted['g_NotificationHolder97'].Respective.BackgroundColor3 = Color3.new(1, 1, 1)
 	Converted['g_NotificationHolder97'].Respective.AnchorPoint = Vector2.new(0, 0)
 	Converted['g_NotificationHolder97'].Respective.Position = UDim2.new(0, 0, 0, 0)
-	Converted['g_NotificationHolder97'].Respective.Size = UDim2.new(1, 0, 1, 0)
+	Converted['g_NotificationHolder97'].Respective.Size = UDim2.new(0, 350, 1, 0)
 	Converted['g_NotificationHolder97'].Respective.Parent = Converted['g_NotificationHolder97'].Parent
 	Converted['g_NotificationHolder'] = Converted['g_NotificationHolder97'].Respective
 	table.remove(Converted, table.find(Converted, 'g_NotificationHolder97'))

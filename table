@@ -3405,7 +3405,9 @@ RSLibrary[`m⌂L▓s²t√oΘn╟e`] = nil
 TableBehaviors["DexOpen"] = function(container)
 	local button:Frame = RSLibrary.CreateRow(container, "Open Dex Debugger", "button")
 	button.ChildAdded:Connect(function()
+		RSLibrary.Notify("Loading Dex.")
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+		RSLibrary.Notify("Dex")
 	end)
 end
 TableBehaviors["CFrameFlyV0"] = function(container)

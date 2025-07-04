@@ -3607,7 +3607,7 @@ Converted.g_TextboxPopup.BorderSizePixel = 1
 
 --
 RSLibrary.UseRSLayouts = true
-RSLibrary.SafeBehaviors = true
+RSLibrary.SafeBehaviors = false
 --
 
 local contextThreads = {}

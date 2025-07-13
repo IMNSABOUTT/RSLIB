@@ -629,7 +629,9 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 			end
 		end
 	end
-	c.stylelist.Interactable = false
+	c.stylelist.Interactable = true
+	c.stylelist.vutton.Interactable = false
+	c.stylelist.boolean.Interactable = false
 	local originLab = Name
 	c.Name = "row."..Name.."m444"
 	CountCreatedCharacters+=#Name
@@ -721,6 +723,7 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 	end
 	if AbsoluteType=="string" then
 		goalRSlayout = 1
+		Converted.edittext:FindFirstChildWhichIsA("UISizeConstraint").MinSize = Vector2.new(25, 0)
 		local box:TextBox = c.stylelist.string.textbox.edittext
 		box.ClearTextOnFocus = false
 		box.Text = Value.Value

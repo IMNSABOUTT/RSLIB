@@ -630,7 +630,7 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 		end
 	end
 	c.stylelist.Interactable = true
-	c.stylelist.vutton.Interactable = false
+	c.stylelist.button.Interactable = false
 	c.stylelist.boolean.Interactable = false
 	local originLab = Name
 	c.Name = "row."..Name.."m444"

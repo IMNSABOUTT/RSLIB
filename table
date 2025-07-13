@@ -479,7 +479,7 @@ function RSLibrary.Notify(text:string, fadeout:number, options)
 		local x = 1
 		local inv = 0.1
 		repeat
-		--	c.BackgroundTransparency-=inv
+			c.BackgroundTransparency-=inv
 			c.txt.TextTransparency-=inv
 			x-=inv
 			task.wait(0.01)

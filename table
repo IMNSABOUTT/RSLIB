@@ -454,6 +454,7 @@ function RSLibrary.Notify(text:string, fadeout:number, options)
 		fadeout = 3
 	end
 	Converted.g_NotificationHolder:FindFirstChildWhichIsA("UIListLayout").Padding = UDim.new(0, 5)
+	Converted.g_NotificationHolder.Size = UDim2.new(0, 350, 1, 0)
 	
 	local c = Converted.g_ExampleNotifFrame:Clone()
 	c.Visible = true
@@ -478,8 +479,8 @@ function RSLibrary.Notify(text:string, fadeout:number, options)
 		local x = 1
 		local inv = 0.1
 		repeat
-			c.BackgroundTransparency-=inv
-			c.TextTransparency-=inv
+		--	c.BackgroundTransparency-=inv
+			c.txt.TextTransparency-=inv
 			x-=inv
 			task.wait(0.01)
 		until x<=0
@@ -488,7 +489,7 @@ function RSLibrary.Notify(text:string, fadeout:number, options)
 		local inv = 0.01
 		repeat
 			c.BackgroundTransparency+=inv
-			c.TextTransparency+=inv
+			c.txt.TextTransparency+=inv
 			x+=inv
 			task.wait(inv)
 		until x>=1

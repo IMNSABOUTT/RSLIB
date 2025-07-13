@@ -730,6 +730,9 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 		box:GetPropertyChangedSignal("Text"):Connect(function()
 			Value.Value = box.Text
 		end)
+		b.MouseButton1Down:Connect(function()
+			box:CaptureFocus()
+		end)
 		fireLocalEvent = function()
 			box:CaptureFocus()
 		end

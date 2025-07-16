@@ -636,6 +636,11 @@ function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:Bo
 	c.Visible = true
 	c.Parent = Container:FindFirstChild("holder")
 	local goalRSlayout = 0
+	for _,v:Frame in c:GetDescendants() do
+		if v.Name=="label" or v.Name=="Label" then
+			v.Interactable = false
+		end
+	end
 	local dfval = nil
 	if Value then
 		dfval = Value.Value

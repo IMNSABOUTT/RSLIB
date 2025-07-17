@@ -1,5 +1,7 @@
 --// Variables
 
+local uVersion = "v1.0"
+
 local RSLibrary = {}
 
 local RSCore = {}
@@ -446,7 +448,7 @@ function RSCore.Returndeb()
 end
 
 function RSLibrary.Title(Title:string)
-	Converted.g_TitleText.Text = Title
+	Converted.g_TitleText.Text = Title.." ["..uVersion.."]"
 	CountCreatedCharacters+=#Title
 end
 

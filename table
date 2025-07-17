@@ -383,49 +383,53 @@ function RSCore.Draggable(Frame:Frame)
 end
 
 function RSCore.PromptString(context:string?)
-	local tb = Converted.g_TextboxPopup:Clone()
-	local tx:TextBox = tb.Window.TextBox
-	tx.Text = ""
-	tx.TextSize = 20
-	tx.PlaceholderText = "String Input"
-	tb.Visible = true
-	if context then
-		tb.context.Text = context
-	end
-	tb.Parent = Converted.g_ScreenUI
-	tx:CaptureFocus()
+	pcall(function()
+		local tb = Converted.g_TextboxPopup:Clone()
+		local tx:TextBox = tb.Window.TextBox
+		tx.Text = ""
+		tx.TextSize = 20
+		tx.PlaceholderText = "String Input"
+		tb.Visible = true
+		if context then
+			tb.context.Text = context
+		end
+		tb.Parent = Converted.g_ScreenUI
+		tx:CaptureFocus()
 
-	local toReturn = nil
-	tx.FocusLost:Connect(function()
-		tb:Destroy()
-		toReturn = tx.Text
+		local toReturn = nil
+		tx.FocusLost:Connect(function()
+			tb:Destroy()
+			toReturn = tx.Text
+		end)
+		repeat
+			task.wait()
+		until toReturn
+		return toReturn
 	end)
-	repeat
-		task.wait()
-	until toReturn
-	return toReturn
 end
 
 function RSCore.DisplayText(context:string?)
-	local tb = Converted.g_TextboxPopup:Clone()
-	local tx:TextBox = tb.Window.TextBox
-	local ct:TextLabel = tb.context
-	tx.Text = ""
-	tx.TextEditable = false
-	tx.Interactable = false
-	tx.Text = context
-	tx.TextSize = 20
-	tx.PlaceholderText = "String Input"
-	tb.Visible = true
-	ct.Text = "Close"
-	ct.Visible = true
-	tb.Parent = Converted.g_ScreenUI
-	RSCore.Draggable(tb)
+	pcall(function()
+		local tb = Converted.g_TextboxPopup:Clone()
+		local tx:TextBox = tb.Window.TextBox
+		local ct:TextLabel = tb.context
+		tx.Text = ""
+		tx.TextEditable = false
+		tx.Interactable = false
+		tx.Text = context
+		tx.TextSize = 20
+		tx.PlaceholderText = "String Input"
+		tb.Visible = true
+		ct.Text = "Close"
+		ct.Visible = true
+		tb.Parent = Converted.g_ScreenUI
+		RSCore.Draggable(tb)
 
-	ct.InputBegan:Connect(function(k)
-		if k.UserInputType==Enum.UserInputType.MouseButton1 then
-			tb:Destroy()
-		end
+		ct.InputBegan:Connect(function(k)
+			if k.UserInputType==Enum.UserInputType.MouseButton1 then
+				tb:Destroy()
+			end
+		end)
 	end)
 end
 
@@ -451,50 +455,52 @@ function RSLibrary.Processed()
 end
 
 function RSLibrary.Notify(text:string, fadeout:number, options)
-	if not fadeout then
-		fadeout = 3
-	end
-	Converted.g_NotificationHolder:FindFirstChildWhichIsA("UIListLayout").Padding = UDim.new(0, 5)
-	Converted.g_NotificationHolder.Size = UDim2.new(0, 350, 1, 0)
-	
-	local c = Converted.g_ExampleNotifFrame:Clone()
-	c.Visible = true
-	c.txt.Text = text
-	c.Parent = Converted.g_NotificationHolder
-	if options then
-		local bu:Frame = c.bu
-		bu.Visible = true
-		for txt,v in options do
-			local c:TextButton = bu.exop:Clone()
-			c.Text = txt
-			c.Visible = true
-			c.Parent = bu
-			
-			c.MouseButton1Down:Connect(function()
-				v()
-			end)
+	pcall(function()
+		if not fadeout then
+			fadeout = 3
 		end
-	end
-	
-	task.spawn(function()
-		local x = 1
-		local inv = 0.1
-		repeat
-			c.BackgroundTransparency-=inv
-			c.txt.TextTransparency-=inv
-			x-=inv
-			task.wait(0.01)
-		until x<=0
-		task.wait(fadeout-.5)
-		local x = 0
-		local inv = 0.01
-		repeat
-			c.BackgroundTransparency+=inv
-			c.txt.TextTransparency+=inv
-			x+=inv
-			task.wait(inv)
-		until x>=1
-		c:Destroy()
+		Converted.g_NotificationHolder:FindFirstChildWhichIsA("UIListLayout").Padding = UDim.new(0, 5)
+		Converted.g_NotificationHolder.Size = UDim2.new(0, 350, 1, 0)
+
+		local c = Converted.g_ExampleNotifFrame:Clone()
+		c.Visible = true
+		c.txt.Text = text
+		c.Parent = Converted.g_NotificationHolder
+		if options then
+			local bu:Frame = c.bu
+			bu.Visible = true
+			for txt,v in options do
+				local c:TextButton = bu.exop:Clone()
+				c.Text = txt
+				c.Visible = true
+				c.Parent = bu
+
+				c.MouseButton1Down:Connect(function()
+					v()
+				end)
+			end
+		end
+
+		task.spawn(function()
+			local x = 1
+			local inv = 0.1
+			repeat
+				c.BackgroundTransparency-=inv
+				c.txt.TextTransparency-=inv
+				x-=inv
+				task.wait(0.01)
+			until x<=0
+			task.wait(fadeout-.5)
+			local x = 0
+			local inv = 0.01
+			repeat
+				c.BackgroundTransparency+=inv
+				c.txt.TextTransparency+=inv
+				x+=inv
+				task.wait(inv)
+			until x>=1
+			c:Destroy()
+		end)
 	end)
 end
 
@@ -508,78 +514,84 @@ end
 
 function RSLibrary.CreateContainer(Name:string, Image:string, Context:string)
 	CountCreatedContainers += 1
-	local Container:Frame = Converted.g_ExampleCommandHolder:Clone()
-	Container.Name = Name
-	Container:AddTag("iscontainer")
-	Container.Parent = Converted.CommandPanel
-	local Sidebar:Frame = Converted.g_ExampleSidebarRow:Clone()
+	local Container:Frame = nil
+	pcall(function()
+		Container = Converted.g_ExampleCommandHolder:Clone()
+		Container.Name = Name
+		Container:AddTag("iscontainer")
+		Container.Parent = Converted.CommandPanel
+		local Sidebar:Frame = Converted.g_ExampleSidebarRow:Clone()
 
-	local sb_button:TextButton = Sidebar.button
-	Sidebar.Visible = true
-	sb_button.Text = Name
-	Sidebar.Name = "sidebar"..Name.."esb11"
-	Sidebar.Parent = Converted.g_SidebarHolder
-	CountCreatedCharacters+=#Name
+		local sb_button:TextButton = Sidebar.button
+		Sidebar.Visible = true
+		sb_button.Text = Name
+		Sidebar.Name = "sidebar"..Name.."esb11"
+		Sidebar.Parent = Converted.g_SidebarHolder
+		CountCreatedCharacters+=#Name
 
-	sb_button.MouseButton1Down:Connect(function()
-		for _,v in Converted.CommandPanel:GetChildren() do
-			if v:IsA("ScrollingFrame") and v:HasTag("iscontainer") then
-				v.Visible = false
-				if v.Name==Name then
-					v.Visible = true
+		sb_button.MouseButton1Down:Connect(function()
+			for _,v in Converted.CommandPanel:GetChildren() do
+				if v:IsA("ScrollingFrame") and v:HasTag("iscontainer") then
+					v.Visible = false
+					if v.Name==Name then
+						v.Visible = true
+					end
 				end
 			end
+		end)
+
+		if CountCreatedContainers==1 then
+			Container.Visible = true
 		end
 	end)
-
-	if CountCreatedContainers==1 then
-		Container.Visible = true
-	end
 
 	return Container
 end
 
 function RSLibrary.CreateSubContainer(Containero:Frame, Name:string, Context:string)
 	CountCreatedSubContainers +=1
-	local Container:Frame = Converted.g_ExampleSubCommandCategory:Clone()
-	Container.Name = "s444"..Name.."subcat"
-	Container.Visible = true
-	Container.label.Text = Name
-	Container.Parent = Containero.holder
-	CountCreatedCharacters+=#Name
-	local drop:TextButton = Container:FindFirstChild("dropd")
-	if drop then
-		local isDropped = true
-		local function dcheck()
-			if isDropped then
-				isDropped = false
-				drop.Rotation = 0
-				Container.holder.Visible = false
-			else
-				isDropped = true
-				drop.Rotation = 90
-				Container.holder.Visible = true
+	local Container:Frame = nil
+	pcall(function()
+		Container = Converted.g_ExampleSubCommandCategory:Clone()
+		Container.Name = "s444"..Name.."subcat"
+		Container.Visible = true
+		Container.label.Text = Name
+		Container.Parent = Containero.holder
+		CountCreatedCharacters+=#Name
+		local drop:TextButton = Container:FindFirstChild("dropd")
+		if drop then
+			local isDropped = true
+			local function dcheck()
+				if isDropped then
+					isDropped = false
+					drop.Rotation = 0
+					Container.holder.Visible = false
+				else
+					isDropped = true
+					drop.Rotation = 90
+					Container.holder.Visible = true
+				end
 			end
-		end
-		drop.MouseButton1Down:Connect(function()
-			dcheck()
-		end)
+			drop.MouseButton1Down:Connect(function()
+				dcheck()
+			end)
 
-		Container.ChildAdded:Connect(function(c)
-			if c:IsA("UIAspectRatioConstraint") then
-				RSCore.StudioDebug("Collapsed")
-				c:Destroy()
-				isDropped = true
-				dcheck()
-			elseif c:IsA("UIListLayout") then
-				RSCore.StudioDebug("Expanded")
-				c:Destroy()
-				isDropped = false
-				dcheck()
-			end
-		end)
-	end
-	table.insert(TableSubContainers, Container)
+			Container.ChildAdded:Connect(function(c)
+				if c:IsA("UIAspectRatioConstraint") then
+					RSCore.StudioDebug("Collapsed")
+					c:Destroy()
+					isDropped = true
+					dcheck()
+				elseif c:IsA("UIListLayout") then
+					RSCore.StudioDebug("Expanded")
+					c:Destroy()
+					isDropped = false
+					dcheck()
+				end
+			end)
+		end
+		table.insert(TableSubContainers, Container)
+	end)
 
 
 	return Container
@@ -587,245 +599,260 @@ end
 
 function RSLibrary.SelectPlayer()
 	local selection:Model = nil
-	local clicked = false
-	local target:BasePart = nil
+	pcall(function()
+		local clicked = false
+		local target:BasePart = nil
 
-	local t = UserInputService.InputBegan:Connect(function(k, g)
-		--if g==false then
-		if k.UserInputType==Enum.UserInputType.MouseButton1 then
-			clicked = true
-			target = Mouse.Target
+		local t = UserInputService.InputBegan:Connect(function(k, g)
+			--if g==false then
+			if k.UserInputType==Enum.UserInputType.MouseButton1 then
+				clicked = true
+				target = Mouse.Target
+			end
+			--end
+		end)
+
+		repeat
+			task.wait()
+		until clicked
+		t:Disconnect()
+
+		local hum:Humanoid = target.Parent:FindFirstChildWhichIsA("Humanoid")
+		if not hum then
+			hum = target.Parent.Parent:FindFirstChildWhichIsA("Humanoid")
 		end
-		--end
+		if hum then
+			selection = hum.Parent
+		end
 	end)
-
-	repeat
-		task.wait()
-	until clicked
-	t:Disconnect()
-
-	local hum:Humanoid = target.Parent:FindFirstChildWhichIsA("Humanoid")
-	if not hum then
-		hum = target.Parent.Parent:FindFirstChildWhichIsA("Humanoid")
-	end
-	if hum then
-		selection = hum.Parent
-	end
 
 	return selection
 end
 
 function RSLibrary.CreateRow(Container:Frame, Name:string, Type:string, Value:BoolValue, arg, Context:string)
 	local AbsoluteType = Type
-	local c:Frame = Converted.g_ExampleCommandRow:Clone()
-	local swtch:Frame = c.stylelist.boolean.switch
-	local b:TextButton = c.button
-	for _,v in c:FindFirstChild("stylelist"):GetChildren() do
-		if v:IsA("Frame") then
-			if v.Name==Type then
-				v.label.Text = Name
-				v.Visible = true
-			else
-				v.Visible = false
-			end
-		end
-	end
-	local originLab = Name
-	c.Name = "row."..Name.."m444"
-	CountCreatedCharacters+=#Name
-	c.Visible = true
-	c.Parent = Container:FindFirstChild("holder")
-	local goalRSlayout = 0
-	for _,v:Frame in c:GetDescendants() do
-		if v.Name=="label" or v.Name=="Label" then
-			v.Interactable = false
-		end
-	end
-	local dfval = nil
-	if Value then
-		dfval = Value.Value
-		Value.Name = Name
-		Value.Parent = c
-	end
-	CountCreatedRows+=1
-	local function fireevent()
-		local e = Instance.new("BindableEvent")
-		e.Parent = c
-	end
-	local fireLocalEvent
-
-	if AbsoluteType=="button" then
-		goalRSlayout = 0
-		fireLocalEvent = function()
-			fireevent()
-		end
-		b.MouseButton1Down:Connect(function()
-			fireevent()
-		end)
-	end
-	if AbsoluteType=="slider" then
-		goalRSlayout = 3
-		local style:Frame = c.stylelist.slider
-		local slide:Frame = style.slide
-		local switch:Frame = slide.switch
-		local theEnd:Frame = slide:FindFirstChild("end")
-
-		local width = slide.AbsoluteSize.X
-		local width2 = width/2
-		local handleWidth = switch.AbsoluteSize.X
-
-		theEnd:Destroy()
-		c.AutomaticSize = Enum.AutomaticSize.None
-		style.AutomaticSize = Enum.AutomaticSize.None
-		slide:FindFirstChildWhichIsA("UIPadding"):Destroy()
-
-		switch.InputBegan:Connect(function(k, g)
-			if k.UserInputType==Enum.UserInputType.MouseButton1 then
-				task.spawn(function()
-					repeat
-						local sliderPosition = math.clamp(Mouse.X - slide.AbsolutePosition.X - (handleWidth / 2), (handleWidth/2), width-(handleWidth/2))
-						local divisor = (sliderPosition-(handleWidth/2)) / (width - (handleWidth))
-
-						if RunService:IsStudio() then
-							switch:FindFirstChildWhichIsA("TextLabel").Text = math.round(divisor*100)/100
-						end
-						switch.Position = UDim2.fromOffset(sliderPosition, 0)
-						Value.Value = arg.max*divisor
-						style.label.Text = originLab.." ["..math.round(Value.Value*10)/10 .."]"
-
-						print(Value.Value)
-						RunService.RenderStepped:Wait()
-					until not UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
-				end)
-			end
-		end)
-
-	end
-	if AbsoluteType=="boolean" then
-		goalRSlayout = 2
-		local function see()
-			swtch:FindFirstChild("false").Visible = false
-			swtch:FindFirstChild("true").Visible = false
-
-			swtch:FindFirstChild(tostring(Value.Value)).Visible = true
-		end
-		fireLocalEvent = function()
-			Value.Value = not Value.Value
-		end
-		see()
-		b.MouseButton1Down:Connect(function()
-			fireevent()
-			Value.Value = not Value.Value
-		end)
-		Value:GetPropertyChangedSignal("Value"):Connect(function()
-			see()
-		end)
-		Converted.g_ScreenUI.Destroying:Connect(function()
-			Value.Value = dfval
-		end)
-	end
-	if AbsoluteType=="string" then
-		goalRSlayout = 1
-		c.stylelist.string.label.Interactable = false
-		Converted.edittext:FindFirstChildWhichIsA("UISizeConstraint").MinSize = Vector2.new(25, 0)
-		local box:TextBox = c.stylelist.string.textbox.edittext
-		box.ClearTextOnFocus = false
-		box.Text = Value.Value
-		box:GetPropertyChangedSignal("Text"):Connect(function()
-			Value.Value = box.Text
-		end)
-		b.MouseButton1Down:Connect(function()
-			box:CaptureFocus()
-		end)
-		fireLocalEvent = function()
-			box:CaptureFocus()
-		end
-		Value:GetPropertyChangedSignal("Value"):Connect(function()
-			box.Text = Value.Value
-		end)
-	end
-	if RSLibrary.UseRSLayouts then
-		c.LayoutOrder = goalRSlayout
-	end
-
-	c.ChildAdded:Connect(function(ce)
-		if ce:IsA("Frame") then
-			fireLocalEvent()
-		end
-		if ce:IsA("UIAspectRatioConstraint") then
-			for _,v in c:FindFirstChild("stylelist"):GetChildren() do
-				if v:IsA("Frame") then
-					if v.Name==Type then
-						v.label.Text = originLab
-					end
+	local c:Frame = nil
+	pcall(function()
+		c = Converted.g_ExampleCommandRow:Clone()
+		local swtch:Frame = c.stylelist.boolean.switch
+		local b:TextButton = c.button
+		for _,v in c:FindFirstChild("stylelist"):GetChildren() do
+			if v:IsA("Frame") then
+				if v.Name==Type then
+					v.label.Text = Name
+					v.Visible = true
+				else
+					v.Visible = false
 				end
 			end
-			task.spawn(function()
-				task.wait(0.01)
-				ce:Destroy()
+		end
+		local originLab = Name
+		c.Name = "row."..Name.."m444"
+		CountCreatedCharacters+=#Name
+		c.Visible = true
+		c.Parent = Container:FindFirstChild("holder")
+		local goalRSlayout = 0
+		for _,v:Frame in c:GetDescendants() do
+			if v.Name=="label" or v.Name=="Label" then
+				v.Interactable = false
+			end
+		end
+		local dfval = nil
+		if Value then
+			dfval = Value.Value
+			Value.Name = Name
+			Value.Parent = c
+		end
+		CountCreatedRows+=1
+		local function fireevent()
+			local e = Instance.new("BindableEvent")
+			e.Parent = c
+		end
+		local fireLocalEvent
+
+		if AbsoluteType=="button" then
+			goalRSlayout = 0
+			fireLocalEvent = function()
+				fireevent()
+			end
+			b.MouseButton1Down:Connect(function()
+				fireevent()
 			end)
 		end
-		if ce.Name=="kbn" and ce:IsA("StringValue") then
-			local k = ce.Value:upper()
-			local mod = " ["..k.."]"
-			c.stylelist.string.label.Text ..= mod
-			c.stylelist.boolean.label.Text ..= mod
-			c.stylelist.button.label.Text ..= mod
+		if AbsoluteType=="slider" then
+			goalRSlayout = 3
+			local style:Frame = c.stylelist.slider
+			local slide:Frame = style.slide
+			local switch:Frame = slide.switch
+			local theEnd:Frame = slide:FindFirstChild("end")
+
+			local width = slide.AbsoluteSize.X
+			local width2 = width/2
+			local handleWidth = switch.AbsoluteSize.X
+
+			theEnd:Destroy()
+			c.AutomaticSize = Enum.AutomaticSize.None
+			style.AutomaticSize = Enum.AutomaticSize.None
+			slide:FindFirstChildWhichIsA("UIPadding"):Destroy()
+
+			switch.InputBegan:Connect(function(k, g)
+				if k.UserInputType==Enum.UserInputType.MouseButton1 then
+					task.spawn(function()
+						repeat
+							local sliderPosition = math.clamp(Mouse.X - slide.AbsolutePosition.X - (handleWidth / 2), (handleWidth/2), width-(handleWidth/2))
+							local divisor = (sliderPosition-(handleWidth/2)) / (width - (handleWidth))
+
+							if RunService:IsStudio() then
+								switch:FindFirstChildWhichIsA("TextLabel").Text = math.round(divisor*100)/100
+							end
+							switch.Position = UDim2.fromOffset(sliderPosition, 0)
+							Value.Value = arg.max*divisor
+							style.label.Text = originLab.." ["..math.round(Value.Value*10)/10 .."]"
+
+							print(Value.Value)
+							RunService.RenderStepped:Wait()
+						until not UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1)
+					end)
+				end
+			end)
 
 		end
+		if AbsoluteType=="boolean" then
+			goalRSlayout = 2
+			local function see()
+				swtch:FindFirstChild("false").Visible = false
+				swtch:FindFirstChild("true").Visible = false
+
+				swtch:FindFirstChild(tostring(Value.Value)).Visible = true
+			end
+			fireLocalEvent = function()
+				Value.Value = not Value.Value
+			end
+			see()
+			b.MouseButton1Down:Connect(function()
+				fireevent()
+				Value.Value = not Value.Value
+			end)
+			Value:GetPropertyChangedSignal("Value"):Connect(function()
+				see()
+			end)
+			Converted.g_ScreenUI.Destroying:Connect(function()
+				Value.Value = dfval
+			end)
+		end
+		if AbsoluteType=="string" then
+			goalRSlayout = 1
+			c.stylelist.string.label.Interactable = false
+			Converted.edittext:FindFirstChildWhichIsA("UISizeConstraint").MinSize = Vector2.new(25, 0)
+			local box:TextBox = c.stylelist.string.textbox.edittext
+			box.ClearTextOnFocus = false
+			box.Text = Value.Value
+			box:GetPropertyChangedSignal("Text"):Connect(function()
+				Value.Value = box.Text
+			end)
+			b.MouseButton1Down:Connect(function()
+				box:CaptureFocus()
+			end)
+			fireLocalEvent = function()
+				box:CaptureFocus()
+			end
+			Value:GetPropertyChangedSignal("Value"):Connect(function()
+				box.Text = Value.Value
+			end)
+		end
+		if RSLibrary.UseRSLayouts then
+			c.LayoutOrder = goalRSlayout
+		end
+
+		c.ChildAdded:Connect(function(ce)
+			if ce:IsA("Frame") then
+				fireLocalEvent()
+			end
+			if ce:IsA("UIAspectRatioConstraint") then
+				for _,v in c:FindFirstChild("stylelist"):GetChildren() do
+					if v:IsA("Frame") then
+						if v.Name==Type then
+							v.label.Text = originLab
+						end
+					end
+				end
+				task.spawn(function()
+					task.wait(0.01)
+					ce:Destroy()
+				end)
+			end
+			if ce.Name=="kbn" and ce:IsA("StringValue") then
+				local k = ce.Value:upper()
+				local mod = " ["..k.."]"
+				c.stylelist.string.label.Text ..= mod
+				c.stylelist.boolean.label.Text ..= mod
+				c.stylelist.button.label.Text ..= mod
+
+			end
+		end)
 	end)
 
 	return c
 end
 
 function RSLibrary.ApplyBehavior(Container:Frame, Behavior:string)
-	for name, func in TableBehaviors do
-		if name==Behavior then
-			func(Container)
+	pcall(function()
+		for name, func in TableBehaviors do
+			if name==Behavior then
+				func(Container)
+			end
 		end
-	end
+	end)
 end
 
 function ContextCore.CountContext()
 	local count = 0
-	for _,v in Converted.g_ContextMenu:GetChildren() do
-		if v:IsA("Frame") and v.Visible then
-			count+=1
+	pcall(function()
+		for _,v in Converted.g_ContextMenu:GetChildren() do
+			if v:IsA("Frame") and v.Visible then
+				count+=1
+			end
 		end
-	end
+	end)
 	return count
 end
 
 function ContextCore.InitalizeNew()
-	TamperedContextCore = false
-	for _,v in Converted.g_ContextMenu:GetChildren() do
-		if v:HasTag("e") then
-			v:Destroy()
+	pcall(function()
+		TamperedContextCore = false
+		for _,v in Converted.g_ContextMenu:GetChildren() do
+			if v:HasTag("e") then
+				v:Destroy()
+			end
 		end
-	end
+	end)
 end
 
 function ContextCore.AddContext(context:string, action)
-	TamperedContextCore = true
-	Converted.g_ExampleContextFrame.Visible = false
-	local c = Converted.g_ExampleContextFrame:Clone()
-	c:FindFirstChildWhichIsA("TextButton").Text = context
-	c:FindFirstChildWhichIsA("TextButton").MouseButton1Down:Connect(function()
-		action()
-	end)
-	c:AddTag("e")
-	c.Visible = true
-	c.Parent = Converted.g_ContextMenu
-end
-
-function ContextCore.AddDivisor()
-	TamperedContextCore = true
-	if ContextCore.CountContext()>0 then
-		local c:Frame = Converted.g_ContextMenu.divisor:Clone()
+	pcall(function()
+		TamperedContextCore = true
+		Converted.g_ExampleContextFrame.Visible = false
+		local c = Converted.g_ExampleContextFrame:Clone()
+		c:FindFirstChildWhichIsA("TextButton").Text = context
+		c:FindFirstChildWhichIsA("TextButton").MouseButton1Down:Connect(function()
+			action()
+		end)
 		c:AddTag("e")
 		c.Visible = true
 		c.Parent = Converted.g_ContextMenu
-	end
+	end)
+end
+
+function ContextCore.AddDivisor()
+	pcall(function()
+		TamperedContextCore = true
+		if ContextCore.CountContext()>0 then
+			local c:Frame = Converted.g_ContextMenu.divisor:Clone()
+			c:AddTag("e")
+			c.Visible = true
+			c.Parent = Converted.g_ContextMenu
+		end
+	end)
 end
 
 function ContextCore.TamperedSinceInitalized()
